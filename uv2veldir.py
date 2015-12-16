@@ -7,8 +7,15 @@ Created on Mon Dec  7 16:34:06 2015
 
 out = uv2veldir(u,v)
 
-out['vel'] --> velocidade
-out['dir'] --> direção
+Convert a u and v velocity to velocity and direction information.
+
+Based on this explanation:
+http://wx.gmu.edu/dev/clim301/lectures/wind/wind-uv.html
+
+Result:
+
+out['vel'] --> velocity
+out['dir'] --> direction
 
 """
 
