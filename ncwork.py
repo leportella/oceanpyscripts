@@ -68,8 +68,9 @@ def rgfgrid2ROMS(filenc):
         ng['lat_u'] = grd['lat_u'][1:-2,1:-2]
         ng['lon_v'] = grd['lon_v'][1:-2,1:-2]
         ng['lat_v'] = grd['lat_v'][1:-2,1:-2]
-        ng['h'] = -grd['h'][1:-2,1:-2]        
-        
+        bat = grd['h'][1:-2,1:-2]        
+        bat[bat<0.1]=0.1
+        ng['h']=bat[:]
         ng['pm'],ng['pn'],ng['dndx'],ng['dmde']=rl.get_metrics(ng['lat_u'],ng['lon_u'],ng['lat_v'],ng['lon_v'])
         ng['f']= CalculateCoriolis(ng['lat_rho'])
       
@@ -89,7 +90,7 @@ def rgfgrid2ROMS(filenc):
         maskv=np.zeros([len(v),len(v[0])])
         for i in range(len(v)):
             for j in range(len(v[i])):       
-                if mask[i,j]==1: maskv[i,j]=1:
+                if mask[i,j]==1: maskv[i,j]=1
                     
         p = ng['lon_psi']
         maskp=np.zeros([len(p),len(p[0])])
