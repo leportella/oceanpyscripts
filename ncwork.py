@@ -68,8 +68,8 @@ def rgfgrid2ROMS(filenc):
         ng['lat_u'] = grd['lat_u'][1:-2,1:-2]
         ng['lon_v'] = grd['lon_v'][1:-2,1:-2]
         ng['lat_v'] = grd['lat_v'][1:-2,1:-2]
-        bat = grd['h'][1:-2,1:-2]        
-        bat[bat<0.1]=0.1
+        bat = -grd['h'][1:-2,1:-2]        
+        
         ng['h']=bat[:]
         ng['pm'],ng['pn'],ng['dndx'],ng['dmde']=rl.get_metrics(ng['lat_u'],ng['lon_u'],ng['lat_v'],ng['lon_v'])
         ng['f']= CalculateCoriolis(ng['lat_rho'])
@@ -99,12 +99,12 @@ def rgfgrid2ROMS(filenc):
                 if mask[i,j]==0 or mask[i+1,j]==0: maskp[i,j]=0
                 else: maskp[i,j]=1        
                 
-        ng['mark_rho'] = mask
-        ng['mark_psi'] = maskp
-        ng['mark_u'] = masku
-        ng['mark_v'] = maskv
+        ng['mask_rho'] = mask
+        ng['mask_psi'] = maskp
+        ng['mask_u'] = masku
+        ng['mask_v'] = maskv
         
-        
+        bat[bat<1]=1
         print 'eta rho = ' + str(len(ng['lon_rho']))
         print 'xsi rho = ' + str(len(ng['lon_rho'][0]))
         print 'eta psi = ' + str(len(ng['lon_psi']))
@@ -138,9 +138,10 @@ def InsertGridDimensions(filenc,dirin):
         filenc.variables['pn'][:] = dirin['pn'][:]        
         filenc.variables['f'][:] = dirin['f'][:]  
         filenc.variables['h'][:] = dirin['h'][:] 
-        filenc.variables['mask_rho'][:]=dirin['mark_rho'][:]
-        filenc.variables['mask_psi'][:]=dirin['mark_psi'][:]
-        filenc.variables['mask_u'][:]=dirin['mark_u'][:]
-        filenc.variables['mask_v'][:]=dirin['mark_v'][:]
+        filenc.variables['mask_rho'][:]=dirin['mask_rho'][:]
+        filenc.variables['mask_psi'][:]=dirin['mask_psi'][:]
+        filenc.variables['mask_u'][:]=dirin['mask_u'][:]
+        filenc.variables['mask_v'][:]=dirin['mask_v'][:]
         
     return 'ok'
+    
