@@ -41,12 +41,12 @@ lon=teste.variables['lon_rho'][:]
 lat=teste.variables['lat_rho'][:]
 zeta=teste.variables['zeta'][:]
 
-for i in range(0,len(zeta)):
 
-    m = Basemap(projection='cyl', resolution='f', llcrnrlon= -49.3, llcrnrlat= -29.2, urcrnrlon= -47, urcrnrlat= -26)
-    
+m = Basemap(projection='cyl', resolution='f', llcrnrlon= -49.3, llcrnrlat= -29.2, urcrnrlon= -47, urcrnrlat= -26)
+ 
+for i in range(0,len(zeta)):
     fig = plt.figure()
-    im1 = m.pcolormesh(lon,lat,zeta[i,:,:],shading='flat',cmap=plt.cm.viridis,latlon=True)
+    im1 = m.pcolormesh(lon,lat,zeta[i,:,:],shading='flat',cmap=plt.cm.viridis,latlon=True,vmin=-0.2,vmax=0.2)
     m.drawcoastlines(linewidth=0.25,color = 'k')
     m.fillcontinents(color='0.8',lake_color='aqua')
     cb = m.colorbar(im1,"right", size="5%", pad="2%")

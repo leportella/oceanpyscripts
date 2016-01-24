@@ -10,6 +10,7 @@ import numpy as np
 from math import pi, radians, sin
 import romslab as rl
 
+
 def GetVariables(filenc):
     """
     Function to get all variables from a nectdf file into a dictionary.
@@ -46,7 +47,6 @@ def CalculateCoriolis(y_rho):
             if y_rho[yy][xx] > -999:
                 f[yy][xx] = 2*(7.2921*10**-5)*sin(radians(y_rho[yy][xx]))
     return f
-
 
 def rgfgrid2ROMS(filenc):
     """
@@ -119,7 +119,6 @@ def rgfgrid2ROMS(filenc):
 def InsertGridDimensions(filenc,dirin):
     """
     """
-    
     #sanity check
     if type(filenc) != nc._netCDF4.Dataset: 
         print 'The file is not in the right format'

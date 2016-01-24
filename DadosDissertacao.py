@@ -15,14 +15,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy.fft as fft
 from ttide.t_tide import t_tide
-from windrose import WindroseAxes
+
 
 direct = '/home/leportella/Documents/master/dados/utilizacao/'
-dirOut = '/home/leportella/Documents/master/dissertacao/ProjetoLatex/dis_controlada/figuras/'
+dirOut = '/home/leportella/Documents/master/dissertacao/Latex/dis_controlada/figuras/'
 
 #################################################################################
 ##                                                                             ##
-##                       DADOS DE PIÇARRAS                                     ##
+##                       DADOS ADCPS PIÇARRAS                                  ##
 ##                                                                             ##
 #################################################################################
 
@@ -165,7 +165,7 @@ for k in range(1,4): #loop pros 3 pontos
 
 #################################################################################
 ##                                                                             ##
-##                  PLOT FIGURAS DE NIVEL DE PENHA                             ##
+##                          NIVEL DE PENHA                                     ##
 ##                                                                             ##
 #################################################################################    
 
@@ -217,37 +217,62 @@ penha['freq'] = fft.fftfreq(len(penha['spectrum']))
 ##plt.xlim(st002['tempo'][0], st002['tempo'][50])
 #plt.savefig(dirOut + 'Temperatura_Geral.png',dpi=200)
 
+
 #################################################################################
 ##                                                                             ##
-##                  DADOS DE VENTO                                             ##
+##                              PLOT TEMP VS VENTO                             ##
 ##                                                                             ##
 #################################################################################   
 
 
-#!!!!!!!!!!!!CONFERIR
+##################################### CFSR ######################################
+cf=np.loadtxt(direct+'VENTO_CFSR_7-1-1999_2-1-2015_1.txt')
+t=[]
+for i in range(0,len(cf)):
+    t.append(datetime.datetime(int(cf[i,0]),int(cf[i,1]),int(cf[i,2]),int(cf[i,3]),0,0))
 
-#metar=np.array(list(csv.reader(open(direct+'metar_01-01-2011_31-12-2011.csv','rb'),delimiter=','))[1:],dtype=np.float64)
-#
-#t=[]
-#for i in range(0,len(metar)):
-#    t.append(datetime.datetime(int(metar[i,2]),int(metar[i,1]),int(metar[i,0]),int(metar[i,3]),int(metar[i,4]),0))
-#
-#met={'tempo':pd.Series(t)}
-#
-#met['dir']=pd.Series(metar[:,5])
-#met['vel']=pd.Series(metar[:,6])
-#
-#ax = WindroseAxes.from_ax()
-#ax.bar(met['dir'],met['vel'], normed=True, edgecolor='white')
-#ax.set_legend()
-##ax.legend(bbox_to_anchor=(0.9, 0.9))
-#l = ax.legend(axespad=-0.10)
-#plt.setp(l.get_texts(), fontsize=8)
-#ax.set_yticks(range(0, 30, 5))  
-#ax.set_yticklabels(map(str, range(0, 30, 5)))
-#plt.savefig(dirOut + 'WindRose_Metar_2011.png',dpi=200)
+cfsr=uv2veldir(cf[:,4],cf[:,5])
+cfsr['tempo']=pd.Series(t)
 
 
+##################################### METAR ######################################
+metar=np.array(list(csv.reader(open(direct+'metar_01-01-2011_31-12-2011.csv','rb'),delimiter=','))[1:],dtype=np.float64)
 
+t=[]
+for i in range(0,len(metar)):
+    t.append(datetime.datetime(int(metar[i,2]),int(metar[i,1]),int(metar[i,0]),int(metar[i,3]),int(metar[i,4]),0))
 
+met={'tempo':pd.Series(t)}
 
+met['dir']=pd.Series(metar[:,5])
+met['vel']=pd.Series(metar[:,6])
+
+############################### PLOT VELOCIDADE #################################
+fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=True, figsize=(15, 5))
+fig.suptitle(u'Temperatura', fontsize=14)
+ax0.plot(sts[1]['tempo'],sts[1]['tempinterp'], label=u'ST001')
+ax0.plot(sts[2]['tempo'][0::2],sts[2]['tempinterp'][0::2],'r',label='ST002')
+ax0.plot(sts[3]['tempo'][0::2],sts[3]['tempinterp'][0::2],'g',label='ST002')
+
+ax1.plot(met['tempo'],met['vel'])
+ax1.set_ylim(0,16)
+
+ax2.plot(cfsr['tempo'],cfsr['vel'])
+ax2.set_xlim(sts[1]['tempo'][0], sts[2]['tempo'].iloc[-1])
+ax2.set_ylim(0,16)
+plt.savefig(dirOut + 'Temp_vs_velvento.png',dpi=200)
+
+############################### PLOT DIREÇÃO ## #################################
+fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=True, figsize=(15, 5))
+fig.suptitle(u'Temperatura', fontsize=14)
+ax0.plot(sts[1]['tempo'],sts[1]['tempinterp'], label=u'ST001')
+ax0.plot(sts[2]['tempo'][0::2],sts[2]['tempinterp'][0::2],'r',label='ST002')
+ax0.plot(sts[3]['tempo'][0::2],sts[3]['tempinterp'][0::2],'g',label='ST002')
+
+ax1.plot(met['tempo'],met['dir'])
+ax1.set_ylim(0,360)
+
+ax2.plot(cfsr['tempo'],cfsr['dir'])
+ax2.set_xlim(sts[1]['tempo'][0], sts[2]['tempo'].iloc[-1])
+ax2.set_ylim(0,360)
+plt.savefig(dirOut + 'Temp_vs_dirvento.png',dpi=200)
