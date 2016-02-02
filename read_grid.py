@@ -21,16 +21,21 @@ import numpy as np
 ##                      CRIANDO GRID (BASE: RGFGRID)                         ##
 ##                                                                           ##
 ###############################################################################
-init=nc.Dataset('/home/leportella/Public/SC07_Sph_Agoravai_roms.nc')
+init=nc.Dataset('/home/leportella/Public/batnova_grd07.nc')
 
 out = rgfgrid2ROMS(init)
 
-grd = nc.Dataset('/home/leportella/projects/teste05/grd_regional06.nc','r+')
+grd = nc.Dataset('/home/leportella/projects/teste09/scregional_grd_v07_sm.nc','r+')
 
 InsertGridDimensions(grd,out)
 
 grd.close()
 
+grd = nc.Dataset('/home/leportella/projects/teste09/scregional_grd_v08_sm.nc','r+')
+h=grd.variables['h'][:]
+h[h<=3]=3.
+grd.variables['h'][:]=h[:]
+grd.close()
 ###############################################################################
 ##                                                                           ##
 ##                      CONVERT COORDINATES                                  ##
@@ -39,7 +44,7 @@ grd.close()
 
 
 myProj = Proj("+proj=utm +zone=22J, +south +ellps=WGS84 +datumWS84 +units=m +no_defs")
-grd = nc.Dataset('/home/leportella/projects/teste09/scregional_grd_v06_sm.nc','r+')
+grd = nc.Dataset('/home/leportella/projects/teste09/scregional_grd_v07_sm.nc','r+')
 
 lon = grd.variables['lon_rho'][:]
 lat = grd.variables['lat_rho'][:]
@@ -48,6 +53,37 @@ x,y = geo2UTM(lat,lon,myProj)
 
 grd.variables['x_rho'][:]=x[:]
 grd.variables['y_rho'][:]=y[:]
+
+
+## lon e lat de psi
+lonp = grd.variables['lon_psi'][:]
+latp = grd.variables['lat_psi'][:]
+
+xp,yp = geo2UTM(latp,lonp,myProj)
+
+grd.variables['x_psi'][:]=xp[:]
+grd.variables['y_psi'][:]=yp[:]
+
+## lon e lat de u
+lonu = grd.variables['lon_u'][:]
+latu = grd.variables['lat_u'][:]
+
+xu,yu = geo2UTM(latu,lonu,myProj)
+
+grd.variables['x_u'][:]=xu[:]
+grd.variables['y_u'][:]=yu[:]
+
+## lon e lat de v
+lonv = grd.variables['lon_v'][:]
+latv = grd.variables['lat_v'][:]
+
+xv,yv = geo2UTM(latv,lonv,myProj)
+
+grd.variables['x_v'][:]=xv[:]
+grd.variables['y_v'][:]=yv[:]
+
+grd.close()
+
 
 ####################### GRADE ANINHADA ##########################
 grd2 = nc.Dataset('/home/leportella/projects/teste09/scregional_grd_v06_an.nc','r+')

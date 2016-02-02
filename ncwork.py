@@ -9,6 +9,7 @@ import netCDF4 as nc
 import numpy as np
 from math import pi, radians, sin
 import romslab as rl
+from pyproj import Proj
 
 
 def GetVariables(filenc):
@@ -143,4 +144,14 @@ def InsertGridDimensions(filenc,dirin):
         filenc.variables['mask_v'][:]=dirin['mask_v'][:]
         
     return 'ok'
+    
+def geo2UTM(lat,lon,myproj):  
+    x = np.zeros([len(lon),len(lon[0])])
+    y = np.zeros([len(lon),len(lon[0])])
+
+    for i in range(len(lon)):
+        for j in range(len(lon[0])):
+            x[i,j], y[i,j] = myproj(lon[i,j], lat[i,j])
+    return x,y
+
     
