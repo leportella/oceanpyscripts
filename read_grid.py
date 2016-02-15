@@ -11,7 +11,7 @@ sys.path.insert(0,'/home/leportella/scripts/pyscripts/myscripts/open')
 import netCDF4 as nc
 from ncwork import *
 import numpy as np
-
+from pyproj import Proj
 
 # NÃO ESQUECER: BATIMETRIA POSIvTIVA PRA BAIXO!
 

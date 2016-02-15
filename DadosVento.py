@@ -39,25 +39,21 @@ met['vel']=pd.Series(metar[:,6])
 
 
 ################# WINDROSE METAR (TODOS OS DADOS) ################################
-fig = plt.figure(figsize=(20,20),facecolor='w', edgecolor='w',dpi=300)
-ax = WindroseAxes.from_ax(fig=fig)
-ax.bar(met['dir'],met['vel'], normed=True, edgecolor='white')
-l = ax.set_legend()
-#plt.setp(l.get_texts(), fontsize=12)
-ax.legend(bbox_to_anchor=(1.1, 0.4))
-ax.set_yticks(range(0, 30, 5))  
-ax.set_yticklabels(map(str, range(0, 30, 5)))
-plt.savefig(dirOut + 'Metar_2011_Windrose_total.png',dpi=300)
+plotaWindRose(met['dir'],met['vel'],maxvalue=30)
+plt.savefig(dirOut + 'Metar_2011_Windrose_total.png',dpi=200)
 
-################## WINDROSE METAR (abaixo de 20) ################################
-fig = plt.figure(figsize=(20,20),facecolor='w', edgecolor='w')
-ax = WindroseAxes.from_ax(fig=fig)
-ax.bar(met['dir'],met['vel'], normed=True, edgecolor='white')
-ax.set_legend()
-ax.legend(bbox_to_anchor=(1.1, 0.4))
-ax.set_yticks(range(0, 30, 5))  
-ax.set_yticklabels(map(str, range(0, 30, 5)))
-plt.savefig(dirOut + 'Metar_2011_Windrose_ate20.png',dpi=300)
+################### WINDROSE METAR (abaixo de 20) ################################
+#
+#
+#
+#fig = plt.figure(figsize=(20,20),facecolor='w', edgecolor='w')
+#ax = WindroseAxes.from_ax(fig=fig)
+#ax.bar(met['dir'],met['vel'], normed=True, edgecolor='white')
+#ax.set_legend()
+#ax.legend(bbox_to_anchor=(1.1, 0.4))
+#ax.set_yticks(range(0, 30, 5))  
+#ax.set_yticklabels(map(str, range(0, 30, 5)))
+#plt.savefig(dirOut + 'Metar_2011_Windrose_ate20.png',dpi=300)
 
 ################## PLOT VEL VENTO METAR (TODOS OS DADOS) ########################
 plt.figure(figsize=(15,5))
@@ -111,15 +107,12 @@ cfsr['tempo']=pd.Series(t)
 
 #
 ################## WINDROSE CFSR (TODOS OS DADOS) ##############################
-#fig = plt.figure(figsize=(20,20),facecolor='w', edgecolor='w')
-#ax = WindroseAxes.from_ax(fig=fig)
-#ax.bar(cfsr['dir'],cfsr['vel'],normed=True, edgecolor='white')
-#l = ax.set_legend()
-#ax.legend(bbox_to_anchor=(1.1, 0.4))
-#ax.set_yticks(range(0, 20, 5))  
-#ax.set_yticklabels(map(str, range(0, 20, 5)))
-#plt.savefig(dirOut + 'CFSR_1999-2015_Windrose_total.png',dpi=300)
-#
+
+    
+plotaWindRose(cfsr['dir'],cfsr['vel'],maxvalue=20,intervalo=5)
+plt.savefig(dirOut + 'CFSR_1999-2015_Windrose_total.png',dpi=200)
+
+
 ################### PLOT VEL VENTO CFSR (TODOS OS DADOS) ########################
 #plt.figure(figsize=(15,5))
 #plt.plot(cfsr['tempo'],cfsr['vel'])
@@ -140,14 +133,8 @@ cfsr['tempo']=pd.Series(t)
 ts=10309 #inicio de 2009
 
 ##################### WINDROSE CFSR (2009-2015) #################################
-fig = plt.figure(figsize=(20,20),facecolor='w', edgecolor='w')
-ax = WindroseAxes.from_ax(fig=fig)
-ax.bar(cfsr['dir'][ts:-1],cfsr['vel'][ts:-1],normed=True, edgecolor='white')
-l = ax.set_legend()
 
-ax.legend(bbox_to_anchor=(1.1, 0.4))
-ax.set_yticks(range(0, 20, 5))  
-ax.set_yticklabels(map(str, range(0, 20, 5)))
+plotaWindRose(cfsr['dir'][ts:-1],cfsr['vel'][ts:-1],maxvalue=20)
 plt.savefig(dirOut + 'CFSR_2009-2015_Windrose_total.png',dpi=300)
 
 ################## PLOT VEL VENTO CFSR (2009-2015)  #############################

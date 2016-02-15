@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.ticker import FuncFormatter
 import pandas as pd
+from windrose import WindroseAxes
 
 def FindSimilar(num,arr):
     """ Finds most similiar value to number (num) in an array (arr)
@@ -23,7 +24,12 @@ def FindSimilar(num,arr):
         out is the id where in vector there is a similar number
     """ 
     arrtemp = np.absolute((arr-(num)))
-    idd = np.where(arrtemp==min(arrtemp))
+    
+    if len(arrtemp[0])==1:
+        idd = np.where(arrtemp==min(arrtemp))
+#    else:
+#        idd = np.where(arrtemp.min())
+        
     return idd,
     
 def uv2veldir(u,v):
@@ -72,6 +78,7 @@ def to_percent(y, position):
     else:
         return s + '%'
 
+
 class PercentHistogram(object):
         
     def __init__(self,inputdata,binss=10,size=(15,5)):
@@ -81,5 +88,43 @@ class PercentHistogram(object):
         plt.show()
     
 
+def new_axes():
+   fig = plt.figure(figsize=(15, 10), dpi=100, facecolor='w', edgecolor='w')
+   rect = [0.1, 0.1, 0.8, 0.8]
+   ax = WindroseAxes(fig, rect, axisbg='w')
+   fig.add_axes(ax)
+   return ax
+
+def plotaWindRose(direc, vel, maxYlabel, maxLeg, stepLeg=1, stepYlabel=5, fonte=18, language='pt'):
+    """
+    Plots a well ajusted WindRose 
     
+    plotaWindRose(direction, velocity, maxYabel=20, maxLeg=0.5, stepLeg=1, stepYlabel=5, fonte=18, language='pt')  
+
+    direction = time series of direction
+    velocity = time series of velcities
+    maxYlabel = maximum value of percentage to be shown in the y axis
+    maxLeg = maximum value of the time series to be represented on the legend
+    stepLeg = interval which the legend should be made
+    stepYlavel = interval which the legend shold be made
+    fonte = fontsize of the labels  
+    language = which language should be made ('pt' for portuguese, 'en', for english)
     
+    """    
+    
+    ax = new_axes()
+    ax.bar(direc,vel,
+           normed=True, 
+           opening=0.8, 
+           edgecolor='white',
+           bins = np.arange(0.00,maxLeg,stepLeg))
+    l = ax.legend(bbox_to_anchor=(1.05, 0.6))
+    plt.setp(l.get_texts(), fontsize=fonte)
+    ax.set_rlabel_position(130)
+    ax.set_yticks(range(0, maxYlabel, stepYlabel))  
+    ax.set_yticklabels(map(str, range(0, maxYlabel, stepYlabel)),fontsize=fonte)
+
+    if language=='pt':
+        ax.set_xticklabels(['N', 'NO', 'O', 'SO', 'S', 'SE', 'E', 'NE'],fontsize=fonte)
+    else:
+        ax.set_xticklabels(['N', 'NW', 'W', 'SW', 'S', 'SE', 'E', 'NE'],fontsize=fonte)
