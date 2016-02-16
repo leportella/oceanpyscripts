@@ -9,7 +9,7 @@ sys.path.insert(0,'/home/leportella/scripts/pyscripts/ttide_py-master/ttide')
 
 import csv
 import numpy as np
-from generaltools import *.
+from generaltools import *
 import datetime
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -77,6 +77,9 @@ for k in range(1,4): #loop pros 3 pontos
     
     sts[k]['spectrum']=fft.fft(sts[k]['nivelinterp'][0::2])
     sts[k]['freq'] = fft.fftfreq(len(sts[k]['spectrum']))    
+
+    sts[k]['tspectrum']=fft.fft(sts[k]['tempinterp'][0::2])
+    sts[k]['tfreq'] = fft.fftfreq(len(sts[k]['tspectrum']))    
     
     sts[k]['nameu1'], sts[k]['fu1'], sts[k]['tideconout1'], sts[k]['xout1'] = t_tide((sts[k]['nivelinterp']-sts[k]['media_nivel'])*100, dt=0.5, lat=np.array(-25))
 
@@ -84,13 +87,6 @@ for k in range(1,4): #loop pros 3 pontos
     
 #    exportsts = pd.DataFrame(sts[k])
 #    exportsts.to_csv(direct+'DF_NivelTemp_' + str (k) + '.csv')
-    
-#    plt.figure(figsize=(15,5))
-#    plt.plot(sts[k]['tempo'],sts[k]['nivel'],)
-#    plt.title(u'Nível - ST00' + str(k))
-#    plt.ylabel(u'Nível (m)')
-#    plt.grid()
-#    plt.savefig(dirOut + 'Nivel_ST00' + str(k) + '.png',dpi=200)
 
 #################################################################################
 ##                                                                             ##
@@ -117,8 +113,8 @@ for k in range(1,4): #loop pros 3 pontos
 #plt.plot(sts[1]['freq'], sts[1]['spectrum'])
 #plt.plot(sts[2]['freq'], sts[2]['spectrum'],'r')
 #plt.plot(sts[3]['freq'], sts[3]['spectrum'],'g')
-#plt.xlim(0.001,0.2)
-#plt.ylim(0,100)
+plt.xlim(0.001,0.2)
+plt.ylim(0,100)
 #plt.xlabel(u'Frequência')
 #plt.grid()
 #plt.legend(['ST001', 'ST002','ST003'])
@@ -222,7 +218,7 @@ for k in range(1,4): #loop pros 3 pontos
 
 #################################################################################
 ##                                                                             ##
-##                  PLOT FIGURAS DE TEMP DE PENHA                              ##
+##                  PLOT FIGURAS DE TEMP DE PICARRAS                              ##
 ##                                                                             ##
 #################################################################################   
 
@@ -237,6 +233,20 @@ for k in range(1,4): #loop pros 3 pontos
 #plt.legend(['ST001', 'ST002','ST003'],bbox_to_anchor=(1.13, 0.97))
 ##plt.xlim(st002['tempo'][0], st002['tempo'][50])
 #plt.savefig(dirOut + 'Temperatura_Geral.png',dpi=200)
+
+
+######################## fft com eixo em log ####################################
+plt.figure(figsize=(15,5))
+plt.semilogx(sts[1]['tfreq'], sts[1]['tspectrum'])
+plt.semilogx(sts[2]['tfreq'], sts[2]['tspectrum'],'r')
+plt.semilogx(sts[3]['tfreq'], sts[3]['tspectrum'],'g')
+plt.xlim(0.001,0.2)
+plt.ylim(0,100)
+plt.xlabel(u'Frequência')
+plt.grid()
+plt.legend(['ST001', 'ST002','ST003'])
+plt.title(u'Espectro da Temperatura - Piçarras 2011')
+plt.savefig(dirOut + 'Espectro_FFT_Temp_Picarras_Logx.png',dpi=200)
 
 
 #################################################################################
