@@ -25,12 +25,8 @@ def FindSimilar(num,arr):
     """ 
     arrtemp = np.absolute((arr-(num)))
     
-    if len(arrtemp[0])==1:
-        idd = np.where(arrtemp==min(arrtemp))
-#    else:
-#        idd = np.where(arrtemp.min())
-        
-    return idd,
+    row,col = np.where(arrtemp==np.min(arrtemp))
+    return row,col
     
 def uv2veldir(u,v):
     """ 

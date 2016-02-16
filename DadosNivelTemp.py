@@ -9,7 +9,7 @@ sys.path.insert(0,'/home/leportella/scripts/pyscripts/ttide_py-master/ttide')
 
 import csv
 import numpy as np
-from generaltools import *
+from generaltools import *.
 import datetime
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -191,18 +191,18 @@ for k in range(1,4): #loop pros 3 pontos
 #################################################################################    
 
 
-Penha=np.array(list(csv.reader(open(direct+'maregrafo_penha.csv','rb'),delimiter=',')),dtype=np.float64)
-
-t=[]
-for i in range(0,len(Penha)):
-    t.append(datetime.datetime(int(Penha[i,2]),int(Penha[i,1]),int(Penha[i,0]),int(Penha[i,3]),int(Penha[i,4]),int(Penha[i,5])))
-
-penha={'tempo':pd.Series(t)}
-penha['nivel']=pd.Series(Penha[:,6]/100)
-
-
-penha['spectrum']=abs(fft.fft(penha['nivel']))
-penha['freq'] = fft.fftfreq(len(penha['spectrum']))
+#Penha=np.array(list(csv.reader(open(direct+'maregrafo_penha.csv','rb'),delimiter=',')),dtype=np.float64)
+#
+#t=[]
+#for i in range(0,len(Penha)):
+#    t.append(datetime.datetime(int(Penha[i,2]),int(Penha[i,1]),int(Penha[i,0]),int(Penha[i,3]),int(Penha[i,4]),int(Penha[i,5])))
+#
+#penha={'tempo':pd.Series(t)}
+#penha['nivel']=pd.Series(Penha[:,6]/100)
+#
+#
+#penha['spectrum']=abs(fft.fft(penha['nivel']))
+#penha['freq'] = fft.fftfreq(len(penha['spectrum']))
 
 #plt.figure(figsize=(15,5))
 #plt.plot(penha['tempo'],penha['nivel'])
@@ -257,16 +257,16 @@ cfsr['tempo']=pd.Series(t)
 
 
 ##################################### METAR ######################################
-metar=np.array(list(csv.reader(open(direct+'metar_01-01-2011_31-12-2011.csv','rb'),delimiter=','))[1:],dtype=np.float64)
-
-t=[]
-for i in range(0,len(metar)):
-    t.append(datetime.datetime(int(metar[i,2]),int(metar[i,1]),int(metar[i,0]),int(metar[i,3]),int(metar[i,4]),0))
-
-met={'tempo':pd.Series(t)}
-
-met['dir']=pd.Series(metar[:,5])
-met['vel']=pd.Series(metar[:,6])
+#metar=np.array(list(csv.reader(open(direct+'metar_01-01-2011_31-12-2011.csv','rb'),delimiter=','))[1:],dtype=np.float64)
+#
+#t=[]
+#for i in range(0,len(metar)):
+#    t.append(datetime.datetime(int(metar[i,2]),int(metar[i,1]),int(metar[i,0]),int(metar[i,3]),int(metar[i,4]),0))
+#
+#met={'tempo':pd.Series(t)}
+#
+#met['dir']=pd.Series(metar[:,5])
+#met['vel']=pd.Series(metar[:,6])
 
 ################################ PLOT VELOCIDADE #################################
 #fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=True, figsize=(15, 5))
