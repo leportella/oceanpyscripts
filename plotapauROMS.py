@@ -11,7 +11,7 @@ import netCDF4 as nc
 from ncwork import *
 import matplotlib.pyplot as plt
 
-a=nc.Dataset('/home/leportella/projects/teste09/ocean_rst_reg.nc')
+a=nc.Dataset('/home/leportella/cluster/run/Run00/ocean_rst_local.nc')
 
 var = GetVariables(a)
 

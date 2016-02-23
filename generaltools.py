@@ -16,6 +16,8 @@ from matplotlib.ticker import FuncFormatter
 import pandas as pd
 from windrose import WindroseAxes
 
+   
+
 def FindSimilar(num,arr):
     """ Finds most similiar value to number (num) in an array (arr)
         

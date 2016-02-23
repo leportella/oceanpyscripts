@@ -13,32 +13,20 @@ from ncwork import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-grd1 = nc.Dataset('/home/leportella/projects/teste09/sclocal_screg07_5x_batruim.nc','r')
-grd2 = nc.Dataset('/home/leportella/projects/teste09/sclocal_screg07_5x.nc','r+')
+grd1 = nc.Dataset('/home/leportella/Public/sclocal_scregv09_5x_batruim_roms.nc','r+')
+grd2 = nc.Dataset('/home/leportella/Public/sclocal_scregv09_5x_batboa_roms.nc','r+')
+
+var = GetVariables(grd1)
+var['h']=grd2.variables['h'][:]
+temp = CreateMask(var)
 
 h1 = grd1.variables['h'][:]
 h2 = grd2.variables['h'][:]
 
 h2[:,0]=h2[:,1]
 h2[0,:]=h2[1,:]
-h2[h2<=1]=1
+#h2[h2<=1]=1
 
-#h = np.zeros([202,277])
-#
-#for i in range(len(h1)):
-#    for j in range(len(h1[0])):
-#        if i<=20:
-#            h[i,j] = i/20. * h2[i,j] + 1-(i/20.) * h1[i,j]
-#        elif i>20 and j<=20:
-#            h[i,j] = j/20. * h2[i,j] + 1-(j/20.) * h1[i,j]
-#        elif i>20 and j>=182:
-#             h[i,j] = (j-182)/20. * h1[i,j] + (202-j)/20. * h2[i,j]
-#        elif i>=257:
-#            h[i,j] = (i-257)/20. * h1[i,j] + (277-i)/20. * h2[i,j]
-#        else:
-#            h[i,j]= h2[i,j]
-
-#h2
 num = 20.
 ti = len(h1)
 tj = len(h1[0])
@@ -65,6 +53,18 @@ for j in range(tj):
              h[i,j] = ind/num
 
 hfinal = (h * h2) + ((1-h) * h1)
-plt.pcolor(hfinal)
+#plt.pcolor(hfinal)
 
-grd2.variables['h'][:]=hfinal[:]
+hfinal[hfinal<3]=3
+
+grdfinal = nc.Dataset('/home/leportella/projects/runs/Run00/sclocal_scregv09_5x.nc','r+')
+grdfinal['h'][:]=hfinal[:]
+grdfinal['mask_rho'][:]=temp['mask_rho'][:]
+grdfinal['mask_psi'][:]=temp['mask_psi'][:]
+grdfinal['mask_u'][:]=temp['mask_u'][:]
+grdfinal['mask_v'][:]=temp['mask_v'][:]
+
+
+
+
+#grd2.variables['h'][:]=hfinal[:]
