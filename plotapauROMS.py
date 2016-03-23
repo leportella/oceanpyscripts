@@ -8,30 +8,31 @@ import sys
 
 sys.path.insert(0,'/home/leportella/scripts/pyscripts/myscripts/open')
 import netCDF4 as nc
-from ncwork import *
 import matplotlib.pyplot as plt
 
-a=nc.Dataset('/home/leportella/cluster/run/Run00_grdregional/ocean_rst_local.nc')
-
-var = GetVariables(a)
-
+a=nc.Dataset('/home/leportella/cluster/run/grd00/ocean_his_reg.nc')
+zeta=a.variables['zeta'][:]
+ubar=a.variables['ubar'][:]
+vbar=a.variables['vbar'][:]
+h=a.variables['h'][:]
+maskr=a.variables['mask_rho'][:]
 
 plt.figure()
-plt.pcolor(var['zeta'][-1,:,:])
+plt.pcolor(zeta[-1,0,:,:])
 plt.title('zeta')
 plt.colorbar()
 
 plt.figure()
-plt.pcolor(var['ubar'][-1,:,:])
+plt.pcolor(ubar[-1,0,:,:])
 plt.title('ubar')
 plt.colorbar()
 
 plt.figure()
-plt.pcolor(var['vbar'][-1,:,:])
+plt.pcolor(vbar[-1,:,:])
 plt.title('vbar')
 plt.colorbar()
 
 plt.figure()
-plt.pcolor(var['h'][:]*var['mask_rho'][:],vmin=0,vmax=3)
+plt.pcolor(h*maskr,vmin=0,vmax=3)
 plt.title('h')
 plt.colorbar()
