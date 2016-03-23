@@ -13,8 +13,8 @@ from ncwork import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-grd1 = nc.Dataset('/home/leportella/Public/sclocal_scregv09_5x_batruim_roms.nc','r+')
-grd2 = nc.Dataset('/home/leportella/Public/sclocal_scregv09_5x_batboa_roms.nc','r+')
+grd1 = nc.Dataset('/home/leportella/Public/sclocal_scregv10_5x_batruim_roms.nc','r+')
+grd2 = nc.Dataset('/home/leportella/Public/sclocal_scregv10_5x_batboa_roms.nc','r+')
 
 var = GetVariables(grd1)
 var['h']=grd2.variables['h'][:]
@@ -53,16 +53,25 @@ for j in range(tj):
              h[i,j] = ind/num
 
 hfinal = (h * h2) + ((1-h) * h1)
-#plt.pcolor(hfinal)
+plt.pcolor(hfinal)
 
 hfinal[hfinal<3]=3
+#
+grdfinal = nc.Dataset('/home/leportella/projects/runs/Run00/sclocal_scregv10_5x.nc','r+')
+grdfinal.variables['h'][:]=hfinal[:]
+#grdfinal.variables['mask_rho'][:]=temp['mask_rho'][:]
+#grdfinal.variables['mask_psi'][:]=temp['mask_psi'][:]
+#grdfinal.variables['mask_u'][:]=temp['mask_u'][:]
+#grdfinal.variables['mask_v'][:]=temp['mask_v'][:]
 
-grdfinal = nc.Dataset('/home/leportella/projects/runs/Run00/sclocal_scregv09_5x.nc','r+')
-grdfinal['h'][:]=hfinal[:]
-grdfinal['mask_rho'][:]=temp['mask_rho'][:]
-grdfinal['mask_psi'][:]=temp['mask_psi'][:]
-grdfinal['mask_u'][:]=temp['mask_u'][:]
-grdfinal['mask_v'][:]=temp['mask_v'][:]
+#grdfinal.variables['x_rho'][:]=grd1.variables['x_rho'][:]
+#grdfinal.variables['y_rho'][:]=grd1.variables['y_rho'][:]
+#grdfinal.variables['x_psi'][:]=grd1.variables['x_psi'][:]
+#grdfinal.variables['y_psi'][:]=grd1.variables['y_psi'][:]
+#grdfinal.variables['x_u'][:]=grd1.variables['x_u'][:]
+#grdfinal.variables['y_u'][:]=grd1.variables['y_u'][:]
+#grdfinal.variables['x_v'][:]=grd1.variables['x_v'][:]
+#grdfinal.variables['y_v'][:]=grd1.variables['y_v'][:]
 
 
 

@@ -95,31 +95,32 @@ for k in range(1,4): #loop pros 3 pontos
 #################################################################################    
 
 
-######################## fft com eixo em log ####################################
+######################### fft com eixo em log ####################################
 #plt.figure(figsize=(15,5))
 #plt.semilogx(sts[1]['freq'], sts[1]['spectrum'])
 #plt.semilogx(sts[2]['freq'], sts[2]['spectrum'],'r')
 #plt.semilogx(sts[3]['freq'], sts[3]['spectrum'],'g')
-#plt.xlim(0.001,0.2)
+#plt.xlim(0.01,0.2)
 #plt.ylim(0,100)
 #plt.xlabel(u'Frequência')
+#plt.xticks(np.arange(min(0.01), max(0.2), 1))
 #plt.grid()
 #plt.legend(['ST001', 'ST002','ST003'])
 #plt.title(u'Espectro da Maré - Piçarras 2011')
 #plt.savefig(dirOut + 'Espectro_FFT_Picarras_Logx.png',dpi=200)
-
-######################## fft com eixo x normal###################################
-#plt.figure(figsize=(15,5))
-#plt.plot(sts[1]['freq'], sts[1]['spectrum'])
-#plt.plot(sts[2]['freq'], sts[2]['spectrum'],'r')
-#plt.plot(sts[3]['freq'], sts[3]['spectrum'],'g')
+#
+######################### fft com eixo x normal###################################
+plt.figure(figsize=(15,5))
+plt.plot(sts[1]['freq'], sts[1]['spectrum'])
+plt.plot(sts[2]['freq'], sts[2]['spectrum'],'r')
+plt.plot(sts[3]['freq'], sts[3]['spectrum'],'g')
 plt.xlim(0.001,0.2)
 plt.ylim(0,100)
-#plt.xlabel(u'Frequência')
-#plt.grid()
-#plt.legend(['ST001', 'ST002','ST003'])
-#plt.title(u'Espectro da Maré - Piçarras 2011')
-#plt.savefig(dirOut + 'Espectro_FFT_Picarras_Plot.png',dpi=200)
+plt.xlabel(u'Frequência')
+plt.grid()
+plt.legend(['ST001', 'ST002','ST003'])
+plt.title(u'Espectro da Maré - Piçarras 2011')
+plt.savefig(dirOut + 'Espectro_FFT_Picarras_Plot.png',dpi=200)
 
 ######################## nivel normalizado ######################################
 #plt.figure(figsize=(15,5))
@@ -187,18 +188,24 @@ plt.ylim(0,100)
 #################################################################################    
 
 
-#Penha=np.array(list(csv.reader(open(direct+'maregrafo_penha.csv','rb'),delimiter=',')),dtype=np.float64)
-#
-#t=[]
-#for i in range(0,len(Penha)):
-#    t.append(datetime.datetime(int(Penha[i,2]),int(Penha[i,1]),int(Penha[i,0]),int(Penha[i,3]),int(Penha[i,4]),int(Penha[i,5])))
-#
-#penha={'tempo':pd.Series(t)}
-#penha['nivel']=pd.Series(Penha[:,6]/100)
-#
-#
-#penha['spectrum']=abs(fft.fft(penha['nivel']))
-#penha['freq'] = fft.fftfreq(len(penha['spectrum']))
+Penha=np.array(list(csv.reader(open(direct+'maregrafo_penha.csv','rb'),delimiter=',')),dtype=np.float64)
+
+t=[]
+for i in range(0,len(Penha)):
+    t.append(datetime.datetime(int(Penha[i,2]),int(Penha[i,1]),int(Penha[i,0]),int(Penha[i,3]),int(Penha[i,4]),int(Penha[i,5])))
+
+penha={'tempo':pd.Series(t)}
+penha['nivel']=pd.Series(Penha[:,6]/100)
+
+n=np.array(pd.Series(Penha[:,6]))
+
+
+penha['spectrum']=abs(fft.fft(penha['nivel']))
+penha['freq'] = fft.fftfreq(len(penha['spectrum']))
+penha['nameu1'], penha['fu1'], penha['tideconout1'], penha['xout1'] = t_tide(n, dt=1, lat=np.array(-25))
+
+penha['xout1']=penha['xout1']/100
+
 
 #plt.figure(figsize=(15,5))
 #plt.plot(penha['tempo'],penha['nivel'])
@@ -207,14 +214,52 @@ plt.ylim(0,100)
 #plt.grid()
 #plt.savefig(dirOut + 'Nivel_Penha.png',dpi=200)
 #
-#plt.figure(figsize=(15,5))
-#plt.semilogx(penha['freq'], penha['spectrum'])
-#plt.xlim(0,0.5)
-#plt.xlabel(u'Frequência')
-#plt.grid()
-#plt.title(u'Espectro da Maré - Penha 95-96')
-#plt.savefig(dirOut + 'Espectro_FFT_Penha_Logx.png',dpi=200)
+
+
+
+plt.figure(figsize=(15,5))
+plt.plot(penha['freq'], penha['spectrum'])
+plt.xlim(0.001,0.2)
+plt.xlabel(u'Frequência')
+plt.grid()
+plt.title(u'Espectro da Maré - Penha 95-96')
+plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
 #
+
+### Spectro penha + picarras subplot
+fig, (ax0, ax1) = plt.subplots(nrows=2, sharey=False, sharex=True, figsize=(11, 5))
+ax0.plot(sts[1]['freq'], sts[1]['spectrum'])
+ax0.plot(sts[2]['freq'], sts[2]['spectrum'],'r')
+ax0.plot(sts[3]['freq'], sts[3]['spectrum'],'g')
+ax0.grid()
+ax0.set_ylim(0,200)
+ax0.set_xlim(0.001,0.2)
+ax0.set_title(u"Espectro de Energia - Piçarras")
+ax0.legend(['ST001', 'ST002','ST003'])
+
+ax1.plot(penha['freq'], penha['spectrum'])
+ax1.set_title(u"Espectro de Energia - Penha")
+ax1.set_ylim(0,1600)
+ax1.set_xlim(0.001,0.2)
+ax1.grid()
+
+plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
+#
+
+#fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=True, sharex=True, figsize=(11, 5))
+#ax0.plot(penha['tempo'], penha['nivel'], label=u'Penha')
+#ax0.legend(numpoints=3, bbox_to_anchor=(1.13, 1),fontsize = 'small')
+#ax0.set_title("Dados Medidos")
+#ax0.grid()
+#ax1.plot(penha['tempo'], penha['xout1'], alpha=0.5, label=u'Penha')
+#ax1.legend(numpoints=3, bbox_to_anchor=(1.13, 1),fontsize = 'small')
+#ax1.set_title("Dados Previstos")
+#ax1.grid()
+#ax2.plot(penha['tempo'], penha['nivel']-penha['xout1'][:,0], alpha=0.5, label=u'Penha')
+#ax2.legend(numpoints=3, bbox_to_anchor=(1.13, 1),fontsize = 'small')
+#ax2.set_title(u"Resíduo")
+#ax2.grid()
+#plt.savefig(dirOut + 'Nivel_Penha_Previsao_Geral.png',dpi=300)
 
 #################################################################################
 ##                                                                             ##
@@ -236,17 +281,17 @@ plt.ylim(0,100)
 
 
 ######################## fft com eixo em log ####################################
-plt.figure(figsize=(15,5))
-plt.semilogx(sts[1]['tfreq'], sts[1]['tspectrum'])
-plt.semilogx(sts[2]['tfreq'], sts[2]['tspectrum'],'r')
-plt.semilogx(sts[3]['tfreq'], sts[3]['tspectrum'],'g')
-plt.xlim(0.001,0.2)
-plt.ylim(0,100)
-plt.xlabel(u'Frequência')
-plt.grid()
-plt.legend(['ST001', 'ST002','ST003'])
-plt.title(u'Espectro da Temperatura - Piçarras 2011')
-plt.savefig(dirOut + 'Espectro_FFT_Temp_Picarras_Logx.png',dpi=200)
+#plt.figure(figsize=(15,5))
+#plt.plot(sts[1]['tfreq'], sts[1]['tspectrum'])
+#plt.plot(sts[2]['tfreq'], sts[2]['tspectrum'],'r')
+#plt.plot(sts[3]['tfreq'], sts[3]['tspectrum'],'g')
+#plt.xlim(0.02,0.4)
+#plt.ylim(0,40)
+#plt.xlabel(u'Frequência')
+#plt.grid()
+#plt.legend(['ST001', 'ST002','ST003'])
+#plt.title(u'Espectro da Temperatura - Piçarras 2011')
+#plt.savefig(dirOut + 'Espectro_FFT_Temp_Picarras.png',dpi=200)
 
 
 #################################################################################

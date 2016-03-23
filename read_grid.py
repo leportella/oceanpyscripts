@@ -21,7 +21,7 @@ import romslab as rl
 ##                      CRIANDO GRID (BASE: RGFGRID)                         ##
 ##                                                                           ##
 ###############################################################################
-init=nc.Dataset('/home/leportella/Public/scregional_grdv9_delftversion_roms.nc')
+init=nc.Dataset('/home/leportella/Public/scregional_grdv10_delftversion_roms.nc')
 
 
 ###### Primeira etapa ############
@@ -61,7 +61,7 @@ out['h'][out['h']<3]=3
 
 ###### Inserting data on NC #######
 
-grd = nc.Dataset('/home/leportella/projects/runs/Run00/scregional_grid_v09.nc','r+')
+grd = nc.Dataset('/home/leportella/projects/runs/Run00/scregional_grdv10.nc','r+')
 InsertGridDimensions(grd,out)
 grd.close()
 

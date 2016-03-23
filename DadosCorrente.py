@@ -90,19 +90,42 @@ for k in range(1,4): #loop pros 3 pontos
     series = pd.DataFrame(sts[k])
     us = [col for col in series if 'u' in col]
     vs = [col for col in series if 'v' in col]
-    
  
-    sts[k]['umean'] = series[us][0:-1].mean(axis=1)
-    sts[k]['vmean'] = series[vs][0:-1].mean(axis=1)
+    sts[k]['umean'] = series[us][:].mean(axis=1)
+    sts[k]['vmean'] = series[vs][:].mean(axis=1)
      
     out2 = uv2veldir(sts[k]['umean'], sts[k]['vmean'])
      
     sts[k]['velmean'] = out2['vel']
     sts[k]['dirmean'] = out2['dir']   
+    sts[k]['velmean_cm'] =  sts[k]['velmean']*100
      
-############################# PLOT WINDROSE #####################################
-
+############################## PLOT WINDROSE #####################################
     plotaWindRose(sts[k]['dirmean'],sts[k]['velmean'],maxYlabel=40, maxLeg=0.30, stepLeg=0.1)     
     plt.savefig(dirOut + 'CurrentRose_ST00' + str(k) + '_DepthAv.png',dpi=200)
     
+    plotaWindRose(sts[k]['dirmean'],sts[k]['velmean_cm'],maxYlabel=40, maxLeg=30, stepLeg=5)     
+    plt.savefig(dirOut + 'CurrentRose_ST00' + str(k) + '_DepthAv_CM.png',dpi=200)    
     
+############################## PLOT HISTOGRAMA ###################################
+#    PercentHistogram(sts[k]['velmean'],binss=30)
+#    plt.title(u'Histograma de Velocidade da Corrente Medida - ST00' + str(k))
+#    plt.ylabel(u'Percentual')
+#    plt.xlabel(u'Velocidade (m/s)')
+#    plt.grid()
+#    plt.savefig(dirOut + 'Corrente_ST00' + str(k) + '_HistVento.png',dpi=200)
+#    
+#    PercentHistogram(sts[k]['dirmean'],binss=30)
+#    plt.title(u'Histograma de Direção da Corrente Medida - ST00' + str(k))
+#    plt.ylabel(u'Percentual')
+#    plt.xlabel(u'Graus')
+#    plt.grid()
+#    plt.savefig(dirOut + 'Corrente_ST00' + str(k) + '_HistDirecao.png',dpi=200)
+#
+#    plt.figure()
+#    plt.plot(sts[k]['tempo'],sts[k]['velmean'])
+#    plt.title(u'Velocidade da Corrente Medida - ST00' + str(k))
+#    plt.ylabel(u'Velocidade (m/s)')
+#    plt.grid()
+#    plt.savefig(dirOut + 'Corrente_ST00' + str(k) + '_Velocidade.png',dpi=200)
+#    

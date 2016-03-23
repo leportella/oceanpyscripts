@@ -13,13 +13,14 @@ import numpy as np
 from generaltools import *
 from ncwork import *
 import matplotlib.pyplot as plt
-import pandas as pd
 from mpl_toolkits.basemap import Basemap
 import datetime 
+from pyproj import Proj
 
 direct = '/home/leportella/Documents/master/dados/utilizacao/'
 dirOut = '/home/leportella/Documents/master/dissertacao/Latex/dis_controlada/figuras/'
 
+myProj = Proj("+proj=utm +zone=22J, +south +ellps=WGS84 +datumWS84 +units=m +no_defs")
 
 ############################### Dados Medidos ###################################
 #sts = {k: None for k in range(1, 4)}
@@ -33,7 +34,9 @@ loc[2] = {'lat': -26.7643, 'lon': -48.6617}
 loc[3] = {'lat': -26.7051, 'lon': -48.6157}
 
 ############################### Dados Modelados #################################
-r = nc.Dataset('/home/leportella/cluster/testes_iniciais/teste09/ocean_his_local.nc','r')
+r = nc.Dataset('/home/leportella/cluster/run/Run00/ocean_his_local.nc','r')
+
+#lonr,latr = UTM2geo(r.variables['x_rho'][:],r.variables['y_rho'][:],myProj)
 lonr = np.array(r.variables['lon_rho'][:])
 latr = np.array(r.variables['lat_rho'][:])
 zeta = r.variables['zeta'][:]
@@ -78,7 +81,6 @@ plt.ylabel(u'Nível (m)')
 plt.grid()
 plt.legend([u'Valores Medidos', u'Valores Modelados'])
 plt.title(u'Nível - ST003')
-plt.savefig(dirOut + 'Calibracao_Teste09.png',dpi=200)
+#plt.savefig(dirOut + 'Calibracao_Teste09.png',dpi=200)
 
-#
 

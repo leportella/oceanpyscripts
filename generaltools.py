@@ -47,8 +47,13 @@ def uv2veldir(u,v):
     vel = []; direc=[]
     for i in range(0,len(u)):
         vel.append(sqrt((u[i]**2)+(v[i]**2)))
-        direc.append(degrees(atan2(u[i],v[i])))
-    att = {'vel':pd.Series(vel),'dir':pd.Series(direc)}
+        direcao = degrees(atan2(u[i],v[i]))
+        if direcao<0:
+            direcao = direcao+360
+        direc.append(direcao)
+            
+        
+        att = {'vel':pd.Series(vel),'dir':pd.Series(direc)}
     return att    
     
 def csv2array(csv,csvdel=';',inline=0):
@@ -123,6 +128,6 @@ def plotaWindRose(direc, vel, maxYlabel, maxLeg, stepLeg=1, stepYlabel=5, fonte=
     ax.set_yticklabels(map(str, range(0, maxYlabel, stepYlabel)),fontsize=fonte)
 
     if language=='pt':
-        ax.set_xticklabels(['N', 'NO', 'O', 'SO', 'S', 'SE', 'E', 'NE'],fontsize=fonte)
+        ax.set_xticklabels(['L', 'NE', 'N', 'NO', 'O', 'SO', 'S', 'SE'],fontsize=fonte)
     else:
-        ax.set_xticklabels(['N', 'NW', 'W', 'SW', 'S', 'SE', 'E', 'NE'],fontsize=fonte)
+        ax.set_xticklabels(['L', 'NE', 'N', 'NW', 'W', 'SW', 'S', 'SE'],fontsize=fonte)
