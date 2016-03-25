@@ -110,17 +110,17 @@ for k in range(1,4): #loop pros 3 pontos
 #plt.savefig(dirOut + 'Espectro_FFT_Picarras_Logx.png',dpi=200)
 #
 ######################### fft com eixo x normal###################################
-plt.figure(figsize=(15,5))
-plt.plot(sts[1]['freq'], sts[1]['spectrum'])
-plt.plot(sts[2]['freq'], sts[2]['spectrum'],'r')
-plt.plot(sts[3]['freq'], sts[3]['spectrum'],'g')
-plt.xlim(0.001,0.2)
-plt.ylim(0,100)
-plt.xlabel(u'Frequência')
-plt.grid()
-plt.legend(['ST001', 'ST002','ST003'])
-plt.title(u'Espectro da Maré - Piçarras 2011')
-plt.savefig(dirOut + 'Espectro_FFT_Picarras_Plot.png',dpi=200)
+#plt.figure(figsize=(15,5))
+#plt.plot(sts[1]['freq'], sts[1]['spectrum'])
+#plt.plot(sts[2]['freq'], sts[2]['spectrum'],'r')
+#plt.plot(sts[3]['freq'], sts[3]['spectrum'],'g')
+#plt.xlim(0.001,0.2)
+#plt.ylim(0,100)
+#plt.xlabel(u'Frequência')
+#plt.grid()
+#plt.legend(['ST001', 'ST002','ST003'])
+#plt.title(u'Espectro da Maré - Piçarras 2011')
+#plt.savefig(dirOut + 'Espectro_FFT_Picarras_Plot.png',dpi=200)
 
 ######################## nivel normalizado ######################################
 #plt.figure(figsize=(15,5))
@@ -217,34 +217,34 @@ penha['xout1']=penha['xout1']/100
 
 
 
-plt.figure(figsize=(15,5))
-plt.plot(penha['freq'], penha['spectrum'])
-plt.xlim(0.001,0.2)
-plt.xlabel(u'Frequência')
-plt.grid()
-plt.title(u'Espectro da Maré - Penha 95-96')
-plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
+#plt.figure(figsize=(15,5))
+#plt.plot(penha['freq'], penha['spectrum'])
+#plt.xlim(0.001,0.2)
+#plt.xlabel(u'Frequência')
+#plt.grid()
+#plt.title(u'Espectro da Maré - Penha 95-96')
+#plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
+##
 #
-
-### Spectro penha + picarras subplot
-fig, (ax0, ax1) = plt.subplots(nrows=2, sharey=False, sharex=True, figsize=(11, 5))
-ax0.plot(sts[1]['freq'], sts[1]['spectrum'])
-ax0.plot(sts[2]['freq'], sts[2]['spectrum'],'r')
-ax0.plot(sts[3]['freq'], sts[3]['spectrum'],'g')
-ax0.grid()
-ax0.set_ylim(0,200)
-ax0.set_xlim(0.001,0.2)
-ax0.set_title(u"Espectro de Energia - Piçarras")
-ax0.legend(['ST001', 'ST002','ST003'])
-
-ax1.plot(penha['freq'], penha['spectrum'])
-ax1.set_title(u"Espectro de Energia - Penha")
-ax1.set_ylim(0,1600)
-ax1.set_xlim(0.001,0.2)
-ax1.grid()
-
-plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
+#### Spectro penha + picarras subplot
+#fig, (ax0, ax1) = plt.subplots(nrows=2, sharey=False, sharex=True, figsize=(11, 5))
+#ax0.plot(sts[1]['freq'], sts[1]['spectrum'])
+#ax0.plot(sts[2]['freq'], sts[2]['spectrum'],'r')
+#ax0.plot(sts[3]['freq'], sts[3]['spectrum'],'g')
+#ax0.grid()
+#ax0.set_ylim(0,200)
+#ax0.set_xlim(0.001,0.2)
+#ax0.set_title(u"Espectro de Energia - Piçarras")
+#ax0.legend(['ST001', 'ST002','ST003'])
 #
+#ax1.plot(penha['freq'], penha['spectrum'])
+#ax1.set_title(u"Espectro de Energia - Penha")
+#ax1.set_ylim(0,1600)
+#ax1.set_xlim(0.001,0.2)
+#ax1.grid()
+#
+#plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
+##
 
 #fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=True, sharex=True, figsize=(11, 5))
 #ax0.plot(penha['tempo'], penha['nivel'], label=u'Penha')
@@ -301,43 +301,23 @@ plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
 #################################################################################   
 
 
-##################################### CFSR ######################################
-cf=np.loadtxt(direct+'VENTO_CFSR_7-1-1999_2-1-2015_1.txt')
-t=[]
-for i in range(0,len(cf)):
-    t.append(datetime.datetime(int(cf[i,0]),int(cf[i,1]),int(cf[i,2]),int(cf[i,3]),0,0))
 
-cfsr=uv2veldir(cf[:,4],cf[:,5])
-cfsr['tempo']=pd.Series(t)
-
-
-##################################### METAR ######################################
-#metar=np.array(list(csv.reader(open(direct+'metar_01-01-2011_31-12-2011.csv','rb'),delimiter=','))[1:],dtype=np.float64)
-#
-#t=[]
-#for i in range(0,len(metar)):
-#    t.append(datetime.datetime(int(metar[i,2]),int(metar[i,1]),int(metar[i,0]),int(metar[i,3]),int(metar[i,4]),0))
-#
-#met={'tempo':pd.Series(t)}
-#
-#met['dir']=pd.Series(metar[:,5])
-#met['vel']=pd.Series(metar[:,6])
 
 ################################ PLOT VELOCIDADE #################################
-#fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=True, figsize=(15, 5))
-#fig.suptitle(u'Temperatura', fontsize=14)
-#ax0.plot(sts[1]['tempo'],sts[1]['tempinterp'], label=u'ST001')
-#ax0.plot(sts[2]['tempo'][0::2],sts[2]['tempinterp'][0::2],'r',label='ST002')
-#ax0.plot(sts[3]['tempo'][0::2],sts[3]['tempinterp'][0::2],'g',label='ST002')
-#
-#ax1.plot(met['tempo'],met['vel'])
-#ax1.set_ylim(0,16)
-#
-#ax2.plot(cfsr['tempo'],cfsr['vel'])
-#ax2.set_xlim(sts[1]['tempo'][0], sts[2]['tempo'].iloc[-1])
-#ax2.set_ylim(0,16)
-#plt.savefig(dirOut + 'Temp_vs_velvento.png',dpi=200)
-#
+fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=True, figsize=(15, 5))
+fig.suptitle(u'Temperatura', fontsize=14)
+ax0.plot(sts[1]['tempo'],sts[1]['tempinterp'], label=u'ST001')
+ax0.plot(sts[2]['tempo'][0::2],sts[2]['tempinterp'][0::2],'r',label='ST002')
+ax0.plot(sts[3]['tempo'][0::2],sts[3]['tempinterp'][0::2],'g',label='ST002')
+
+ax1.plot(met['tempo'],met['vel'])
+ax1.set_ylim(0,10)
+
+ax2.plot(cfsr['tempo'],cfsr['vel'])
+ax2.set_xlim(sts[1]['tempo'][0], sts[2]['tempo'].iloc[-1])
+ax2.set_ylim(0,10)
+plt.savefig(dirOut + 'Temp_vs_velvento.png',dpi=200)
+
 ################################ PLOT DIREÇÃO ## #################################
 #fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=True, figsize=(15, 5))
 #fig.suptitle(u'Temperatura', fontsize=14)

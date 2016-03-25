@@ -55,7 +55,35 @@ def uv2veldir(u,v):
         
         att = {'vel':pd.Series(vel),'dir':pd.Series(direc)}
     return att    
+
+def uv2veldir_wind(u,v):
+    """ 
+    out = uv2veldir_wind(u,v)
+
+    Convert a u and v velocity to velocity and direction information.
     
+    Based on this explanation:
+    http://wx.gmu.edu/dev/clim301/lectures/wind/wind-uv.html
+    
+    Result:
+    
+    out['vel'] --> velocity
+    out['dir'] --> direction
+    """
+    vel = []; direc=[]
+    for i in range(0,len(u)):
+        vel.append(sqrt((u[i]**2)+(v[i]**2)))
+        direcao = degrees(atan2(u[i],v[i]))
+        direcao-=180
+        if direcao<0:
+            direcao = direcao+360
+        
+        direc.append(direcao)
+            
+        
+        att = {'vel':pd.Series(vel),'dir':pd.Series(direc)}
+    return att    
+
 def csv2array(csv,csvdel=';',inline=0):
     """
         Read an csv to a numpy array with float numbers
