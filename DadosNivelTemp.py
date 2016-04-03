@@ -47,10 +47,10 @@ for k in range(1,4): #loop pros 3 pontos
   
     if k==3:
         temp=np.subtract(t,datetime.timedelta(hours=3))
-        t2 = pd.Series(temp)
-        sts[k] = {'tempo': t2}
+#        t2 = pd.Series(temp)
+        sts[k] = {'tempo': temp}
     else:
-        t = pd.Series(t)
+#        t = pd.Series(t)
         sts[k] = {'tempo': t}
     
     sts[k]['nivel'] = pd.Series(rep[:,6])
@@ -152,7 +152,7 @@ for k in range(1,4): #loop pros 3 pontos
 #plt.title(u'Nível - ST001')
 #plt.savefig(dirOut + 'Nivel_ExemploNans.png',dpi=200)
 #
-######################### nivel medido e previsto#################################
+######################### nivel medido e previsto pelo ttide #################################
 
 #fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=True, sharex=True, figsize=(11, 5))
 #
@@ -207,16 +207,16 @@ penha['nameu1'], penha['fu1'], penha['tideconout1'], penha['xout1'] = t_tide(n, 
 penha['xout1']=penha['xout1']/100
 
 
+
+######################### Plot Nivel Penha ####################################
 #plt.figure(figsize=(15,5))
 #plt.plot(penha['tempo'],penha['nivel'])
 #plt.title(u'Nível - Penha')
 #plt.ylabel(u'Nível (m)')
 #plt.grid()
 #plt.savefig(dirOut + 'Nivel_Penha.png',dpi=200)
-#
 
-
-
+################################# fft Penha ####################################
 #plt.figure(figsize=(15,5))
 #plt.plot(penha['freq'], penha['spectrum'])
 #plt.xlim(0.001,0.2)
@@ -224,9 +224,9 @@ penha['xout1']=penha['xout1']/100
 #plt.grid()
 #plt.title(u'Espectro da Maré - Penha 95-96')
 #plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
-##
-#
-#### Spectro penha + picarras subplot
+
+
+######################### fft Penha e PIçarra juntas ####################################
 #fig, (ax0, ax1) = plt.subplots(nrows=2, sharey=False, sharex=True, figsize=(11, 5))
 #ax0.plot(sts[1]['freq'], sts[1]['spectrum'])
 #ax0.plot(sts[2]['freq'], sts[2]['spectrum'],'r')
@@ -242,10 +242,11 @@ penha['xout1']=penha['xout1']/100
 #ax1.set_ylim(0,1600)
 #ax1.set_xlim(0.001,0.2)
 #ax1.grid()
-#
-#plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
-##
 
+#plt.savefig(dirOut + 'Espectro_FFT_Penha.png',dpi=200)
+
+
+######################### MareMeteorologica Negativa em PIçarras ####################################
 #fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=True, sharex=True, figsize=(11, 5))
 #ax0.plot(penha['tempo'], penha['nivel'], label=u'Penha')
 #ax0.legend(numpoints=3, bbox_to_anchor=(1.13, 1),fontsize = 'small')
@@ -259,7 +260,7 @@ penha['xout1']=penha['xout1']/100
 #ax2.legend(numpoints=3, bbox_to_anchor=(1.13, 1),fontsize = 'small')
 #ax2.set_title(u"Resíduo")
 #ax2.grid()
-#plt.savefig(dirOut + 'Nivel_Penha_Previsao_Geral.png',dpi=300)
+#plt.savefig(dirOut + 'Nivel_Penha_MareMeteoNegativa.png',dpi=300)
 
 #################################################################################
 ##                                                                             ##
@@ -301,22 +302,20 @@ penha['xout1']=penha['xout1']/100
 #################################################################################   
 
 
-
-
-################################ PLOT VELOCIDADE #################################
-fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=True, figsize=(15, 5))
-fig.suptitle(u'Temperatura', fontsize=14)
-ax0.plot(sts[1]['tempo'],sts[1]['tempinterp'], label=u'ST001')
-ax0.plot(sts[2]['tempo'][0::2],sts[2]['tempinterp'][0::2],'r',label='ST002')
-ax0.plot(sts[3]['tempo'][0::2],sts[3]['tempinterp'][0::2],'g',label='ST002')
-
-ax1.plot(met['tempo'],met['vel'])
-ax1.set_ylim(0,10)
-
-ax2.plot(cfsr['tempo'],cfsr['vel'])
-ax2.set_xlim(sts[1]['tempo'][0], sts[2]['tempo'].iloc[-1])
-ax2.set_ylim(0,10)
-plt.savefig(dirOut + 'Temp_vs_velvento.png',dpi=200)
+################################# PLOT VELOCIDADE #################################
+#fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=True, figsize=(15, 5))
+#fig.suptitle(u'Temperatura', fontsize=14)
+#ax0.plot(sts[1]['tempo'],sts[1]['tempinterp'], label=u'ST001')
+#ax0.plot(sts[2]['tempo'][0::2],sts[2]['tempinterp'][0::2],'r',label='ST002')
+#ax0.plot(sts[3]['tempo'][0::2],sts[3]['tempinterp'][0::2],'g',label='ST002')
+#
+#ax1.plot(met['tempo'],met['vel'])
+#ax1.set_ylim(0,10)
+#
+#ax2.plot(cfsr['tempo'],cfsr['vel'])
+#ax2.set_xlim(sts[1]['tempo'][0], sts[2]['tempo'].iloc[-1])
+#ax2.set_ylim(0,10)
+#plt.savefig(dirOut + 'Temp_vs_velvento.png',dpi=200)
 
 ################################ PLOT DIREÇÃO ## #################################
 #fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=True, figsize=(15, 5))
@@ -332,3 +331,78 @@ plt.savefig(dirOut + 'Temp_vs_velvento.png',dpi=200)
 #ax2.set_xlim(sts[1]['tempo'][0], sts[2]['tempo'].iloc[-1])
 #ax2.set_ylim(0,360)
 #plt.savefig(dirOut + 'Temp_vs_dirvento.png',dpi=200)
+
+######################### TEMPERATURA VS VENTO ####################################
+#plt.figure(figsize=(15,5))
+#plt.plot(cfsr['tempo'],cfsr['dir'],)
+#ax = plt.gca()
+#ax2 = ax.twinx()
+#ax2.plot(sts[1]['tempo'],sts[1]['tempinterp'],'r')
+#plt.xlim(sts[1]['tempo'][1],sts[1]['tempo'][-1])
+#ax2.set_ylim(17,21)
+#plt.title(u'Temperatura em ST001 e Direçãdo do Vento')
+#ax.set_ylabel(u'Direção do Vento (graus)',color='blue')
+#ax2.set_ylabel(u'Temperatura (graus Celcius)',color='red')
+#plt.grid()
+#plt.savefig(dirOut + 'Temperatura_Vento_ST001.png',dpi=200)
+#
+#
+#plt.figure(figsize=(15,5))
+#plt.plot(cfsr['tempo'],cfsr['dir'],)
+#ax = plt.gca()
+#ax2 = ax.twinx()
+#ax2.plot(sts[2]['tempo'][0::2],sts[2]['tempinterp'][0::2],'r')
+#plt.xlim(sts[2]['tempo'][1],sts[2]['tempo'][-1])
+#ax2.set_ylim(17,21)
+#plt.title(u'Temperatura em ST002 e Direçãdo do Vento')
+#ax.set_ylabel(u'Direção do Vento (graus)',color='blue')
+#ax2.set_ylabel(u'Temperatura (graus Celcius)',color='red')
+#plt.grid()
+#plt.savefig(dirOut + 'Temperatura_Vento_ST002.png',dpi=200)
+#
+#
+#plt.figure(figsize=(15,5))
+#plt.plot(cfsr['tempo'],cfsr['dir'],)
+#ax = plt.gca()
+#ax2 = ax.twinx()
+#ax2.plot(sts[3]['tempo'][0::2],sts[3]['tempinterp'][0::2],'r')
+#plt.xlim(sts[3]['tempo'][1],sts[3]['tempo'][-1])
+#ax.set_ylabel(u'Direção do Vento (graus)',color='blue')
+#ax2.set_ylabel(u'Temperatura (graus Celcius)',color='red')
+#ax2.set_ylabel(u'Temperatura (graus Celcius)')
+#ax2.set_ylim(17,21)
+#plt.grid()
+#plt.title(u'Temperatura em ST003 e Direçãdo do Vento')
+#plt.savefig(dirOut + 'Temperatura_Vento_ST003.png',dpi=200)
+#
+
+
+
+######################### hISTOGRAA DOS DADOS DE NIVEL ####################################
+#for k in range(1,4):
+#    PercentHistogram(sts[k]['nivel']-sts[k]['media_nivel'],binss=40)
+#    plt.title(u'Histograma dados de Nível - ST00' + str(k))
+#    plt.ylabel(u'Percentual')
+#    plt.xlabel(u'Nível (m)')
+#    plt.xlim(-1.2,1.2)
+#    plt.grid()
+#    plt.savefig(dirOut + 'Hist_nivel_ST00' + str(k)+'.png',dpi=200)
+#
+#
+#PercentHistogram(penha['nivel'],binss=50)
+#plt.title(u'Histograma dados de Nível - Penha')
+#plt.ylabel(u'Percentual')
+#plt.xlabel(u'Nível (m)')
+#plt.xlim(-1.2,1.2)
+#plt.grid()
+#plt.savefig(dirOut + 'Hist_nivel_Penha.png',dpi=200)
+
+
+del STS
+del e
+del i
+del k
+del pi
+del rep
+del t
+del temp

@@ -111,68 +111,67 @@ for k in range(1,4): #loop pros 3 pontos
     sts[k]['vresidual_50h']=vresidual_50h
 
 
-    ############################### QUIVER CORRENTE #####################################
-    fig, (ax0, ax1) = plt.subplots(nrows=2, sharey=False, sharex=False, figsize=(11, 5))
-    
-    q = ax0.quiver(sts[k]['u_depthav'],sts[k]['v_depthav'],scale=3)
-    p = plt.quiverkey(q,1480,0.05,0.1,"0.1 m/s",coordinates='data',color='k')
-    ax0.axes.get_yaxis().set_visible(False)
-    ax0.axes.get_xaxis().set_visible(False)
-    ax0.set_ylim(-0.02,0.08)
-    ax0.set_xlim(0,len(sts[k]['u_depthav']))
-    ax0.set_title('Vetores de Corrente - ST00' + str(k))
-    
-    ax1.plot(sts[k]['tempo'],sts[k]['vel_depthav'])
-    ax1.grid()
-    ax1.set_ylim(0,0.3)
-    ax1.set_title('Velocidade da Corrente - ST00' + str(k))
-    plt.savefig(dirOut + 'Corrente_Quiver_ST00' + str(k) + '.png',dpi=200)
+#    ############################### QUIVER CORRENTE #####################################
+#    fig, (ax0, ax1) = plt.subplots(nrows=2, sharey=False, sharex=False, figsize=(11, 5))
+#    
+#    q = ax0.quiver(sts[k]['u_depthav'],sts[k]['v_depthav'],scale=3)
+#    p = plt.quiverkey(q,1480,0.05,0.1,"0.1 m/s",coordinates='data',color='k')
+#    ax0.axes.get_yaxis().set_visible(False)
+#    ax0.axes.get_xaxis().set_visible(False)
+#    ax0.set_ylim(-0.02,0.08)
+#    ax0.set_xlim(0,len(sts[k]['u_depthav']))
+#    ax0.set_title('Vetores de Corrente - ST00' + str(k))
+#    
+#    ax1.plot(sts[k]['tempo'],sts[k]['vel_depthav'])
+#    ax1.grid()
+#    ax1.set_ylim(0,0.3)
+#    ax1.set_title('Velocidade da Corrente - ST00' + str(k))
+#    plt.savefig(dirOut + 'Corrente_Quiver_ST00' + str(k) + '.png',dpi=200)
 
 
-############################### CORRENTE RESIDUAL #####################################
-fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=False, figsize=(11, 5))
-
-q = ax0.quiver(sts[1]['uresidual_50h'],sts[1]['vresidual_50h'],scale=0.8,width=0.005)
-p = plt.quiverkey(q,29,0.05,0.05,"0.05 m/s",coordinates='data',color='k')
-ax0.axes.get_yaxis().set_visible(False)
-ax0.axes.get_xaxis().set_visible(False)
-ax0.set_ylim(-0.02,0.08)
-ax0.set_xlim(0,len(sts[1]['uresidual_50h']))
-ax0.set_title('Corrente Residual - 50h - ST001',fontsize=12)
-
-q = ax1.quiver(sts[2]['uresidual_50h'],sts[2]['vresidual_50h'],scale=0.8,width=0.005)
-p = plt.quiverkey(q,29,0.05,0.05,"0.05 m/s",coordinates='data',color='k')
-ax1.axes.get_yaxis().set_visible(False)
-ax1.axes.get_xaxis().set_visible(False)
-ax1.set_ylim(-0.02,0.08)
-ax1.set_xlim(0,len(sts[2]['uresidual_50h']))
-ax1.set_title('Corrente Residual - 50h - ST002',fontsize=12)
-
-q = ax2.quiver(sts[3]['uresidual_50h'],sts[3]['vresidual_50h'],scale=0.8,width=0.005)
-p = plt.quiverkey(q,29,0.05,0.05,"0.05 m/s",coordinates='data',color='k')
-ax2.axes.get_yaxis().set_visible(False)
-ax2.axes.get_xaxis().set_visible(True)
-ax2.set_ylim(-0.02,0.08)
-ax2.set_xlim(0,len(sts[3]['uresidual_50h']))
-ax2.set_title('Corrente Residual - 50h - ST003',fontsize=12)
-
-labels = [item.get_text() for item in ax2.get_xticklabels()]
-labels[0] = '0 h'
-labels[1] = '250 h'
-labels[2] = '500 h'
-labels[3] = '750 h'
-labels[4] = '1000 h'
-labels[5] = '1250 h'
-labels[6] = '1500 h'
-
-ax2.set_xticklabels(labels)
-plt.savefig(dirOut + 'Corrente_Residual_Medida_50h.png',dpi=200)
+################################ CORRENTE RESIDUAL #####################################
+#fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, sharey=False, sharex=False, figsize=(11, 5))
+#
+#q = ax0.quiver(sts[1]['uresidual_50h'],sts[1]['vresidual_50h'],scale=0.8,width=0.005)
+#p = plt.quiverkey(q,29,0.05,0.05,"0.05 m/s",coordinates='data',color='k')
+#ax0.axes.get_yaxis().set_visible(False)
+#ax0.axes.get_xaxis().set_visible(False)
+#ax0.set_ylim(-0.02,0.08)
+#ax0.set_xlim(0,len(sts[1]['uresidual_50h']))
+#ax0.set_title('Corrente Residual - 50h - ST001',fontsize=12)
+#
+#q = ax1.quiver(sts[2]['uresidual_50h'],sts[2]['vresidual_50h'],scale=0.8,width=0.005)
+#p = plt.quiverkey(q,29,0.05,0.05,"0.05 m/s",coordinates='data',color='k')
+#ax1.axes.get_yaxis().set_visible(False)
+#ax1.axes.get_xaxis().set_visible(False)
+#ax1.set_ylim(-0.02,0.08)
+#ax1.set_xlim(0,len(sts[2]['uresidual_50h']))
+#ax1.set_title('Corrente Residual - 50h - ST002',fontsize=12)
+#
+#q = ax2.quiver(sts[3]['uresidual_50h'],sts[3]['vresidual_50h'],scale=0.8,width=0.005)
+#p = plt.quiverkey(q,29,0.05,0.05,"0.05 m/s",coordinates='data',color='k')
+#ax2.axes.get_yaxis().set_visible(False)
+#ax2.axes.get_xaxis().set_visible(True)
+#ax2.set_ylim(-0.02,0.08)
+#ax2.set_xlim(0,len(sts[3]['uresidual_50h']))
+#ax2.set_title('Corrente Residual - 50h - ST003',fontsize=12)
+#
+#labels = [item.get_text() for item in ax2.get_xticklabels()]
+#labels[0] = '0 h'
+#labels[1] = '250 h'
+#labels[2] = '500 h'
+#labels[3] = '750 h'
+#labels[4] = '1000 h'
+#labels[5] = '1250 h'
+#labels[6] = '1500 h'
+#
+#ax2.set_xticklabels(labels)
+#plt.savefig(dirOut + 'Corrente_Residual_Medida_50h.png',dpi=200)
 
 
 
 ############################### PLOT WINDROSE ###############################
 
-######
 #    plotaWindRose(sts[k]['dir_depthav'],sts[k]['vel_depthav'],maxYlabel=40, maxLeg=0.30, stepLeg=0.1)     
 #    plt.savefig(dirOut + 'CurrentRose_ST00' + str(k) + '_DepthAv.png',dpi=200)
 #    
@@ -204,13 +203,87 @@ plt.savefig(dirOut + 'Corrente_Residual_Medida_50h.png',dpi=200)
     
 #################################################################################
 ##                                                                             ##
-##                                  RESIDUAL                                   ##
+##                              COMPARACAO COM VENTO                           ##
 ##                                                                             ##
 #################################################################################
 
- 
+plt.figure(figsize=(15,5))
+plt.plot(cfsr['tempo'],cfsr['vel'],'r')
+ax = plt.gca()
+ax2 = ax.twinx()
+ax2.plot(sts[1]['tempo'],sts[1]['vel_depthav'],'b')
+plt.xlim(sts[1]['tempo'][1],sts[1]['tempo'][len(sts[1]['tempo'])-1])
+ax2.set_ylim(0,0.3)
+plt.title(u'Velocidade da Corrente em ST001 e Velocidade do Vento')
+ax.set_ylabel(u'Velocidade do Vento (m/s)',color='red')
+ax2.set_ylabel(u'Velocidade da Corrente (m/s)',color='blue')
+plt.grid()
+plt.savefig(dirOut + 'Corrente_Vento_ST001.png',dpi=200)
+
+plt.figure(figsize=(15,5))
+plt.plot(cfsr['tempo'],cfsr['vel'],'r')
+ax = plt.gca()
+ax2 = ax.twinx()
+ax2.plot(sts[2]['tempo'],sts[2]['vel_depthav'],'b')
+plt.xlim(sts[2]['tempo'][1],sts[2]['tempo'][len(sts[2]['tempo'])-1])
+ax2.set_ylim(0,0.3)
+plt.title(u'Velocidade da Corrente em ST002 e Velocidade do Vento')
+ax.set_ylabel(u'Velocidade do Vento (m/s)',color='red')
+ax2.set_ylabel(u'Velocidade da Corrente (m/s)',color='blue')
+plt.grid()
+plt.savefig(dirOut + 'Corrente_Vento_ST002.png',dpi=200)
+
+plt.figure(figsize=(15,5))
+plt.plot(cfsr['tempo'],cfsr['vel'],'r')
+ax = plt.gca()
+ax2 = ax.twinx()
+ax2.plot(sts[3]['tempo'],sts[3]['vel_depthav'],'b')
+plt.xlim(sts[3]['tempo'][1],sts[3]['tempo'][len(sts[1]['tempo'])-1])
+ax2.set_ylim(0,0.3)
+plt.title(u'Velocidade da Corrente em ST003 e Velocidade do Vento')
+ax.set_ylabel(u'Velocidade do Vento (m/s)',color='red')
+ax2.set_ylabel(u'Velocidade da Corrente (m/s)',color='blue')
+plt.grid()
+plt.savefig(dirOut + 'Corrente_Vento_ST003.png',dpi=200)
 
 
-    
-    
-    
+
+###################
+plt.figure(figsize=(15,5))
+plt.plot(cfsr['tempo'],cfsr['dir'],'r')
+ax = plt.gca()
+ax2 = ax.twinx()
+ax2.plot(sts[1]['tempo'],sts[1]['vel_depthav'],'b')
+plt.xlim(sts[1]['tempo'][1],sts[1]['tempo'][len(sts[1]['tempo'])-1])
+ax2.set_ylim(0,0.3)
+plt.title(u'Velocidade da Corrente em ST001 e Direção do Vento')
+ax.set_ylabel(u'Direção do Vento (graus)',color='red')
+ax2.set_ylabel(u'Velocidade da Corrente (m/s)',color='blue')
+plt.grid()
+plt.savefig(dirOut + 'Corrente_VentoDir_ST001.png',dpi=200)
+
+plt.figure(figsize=(15,5))
+plt.plot(cfsr['tempo'],cfsr['dir'],'r')
+ax = plt.gca()
+ax2 = ax.twinx()
+ax2.plot(sts[2]['tempo'],sts[2]['vel_depthav'],'b')
+plt.xlim(sts[2]['tempo'][1],sts[2]['tempo'][len(sts[2]['tempo'])-1])
+ax2.set_ylim(0,0.3)
+plt.title(u'Velocidade da Corrente em ST002 e Velocidade do Vento')
+ax.set_ylabel(u'Direção do Vento (graus)',color='red')
+ax2.set_ylabel(u'Velocidade da Corrente (m/s)',color='blue')
+plt.grid()
+plt.savefig(dirOut + 'Corrente_VentoDir_ST002.png',dpi=200)
+
+plt.figure(figsize=(15,5))
+plt.plot(cfsr['tempo'],cfsr['dir'],'r')
+ax = plt.gca()
+ax2 = ax.twinx()
+ax2.plot(sts[3]['tempo'],sts[3]['vel_depthav'],'b')
+plt.xlim(sts[3]['tempo'][1],sts[3]['tempo'][len(sts[1]['tempo'])-1])
+ax2.set_ylim(0,0.3)
+plt.title(u'Velocidade da Corrente em ST003 e Velocidade do Vento')
+ax.set_ylabel(u'Direção do Vento (graus)',color='red')
+ax2.set_ylabel(u'Velocidade da Corrente (m/s)',color='blue')
+plt.grid()
+plt.savefig(dirOut + 'Corrente_VentoDir_ST003.png',dpi=200)
