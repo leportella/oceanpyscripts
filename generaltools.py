@@ -29,7 +29,12 @@ def FindSimilar(num,arr):
     
     row,col = np.where(arrtemp==np.min(arrtemp))
     return row,col
-    
+
+def find_index_of_nearest_xy(y_array, x_array, y_point, x_point):
+    distance = (y_array-y_point)**2 + (x_array-x_point)**2
+    idy,idx = np.where(distance==distance.min())
+    return idy[0],idx[0]
+
 def uv2veldir(u,v):
     """ 
     out = uv2veldir(u,v)

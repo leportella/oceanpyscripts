@@ -398,7 +398,7 @@ penha['xout1']=penha['xout1']/100
 #plt.savefig(dirOut + 'Hist_nivel_Penha.png',dpi=200)
 
 
-del STS
+del STs
 del e
 del i
 del k
@@ -406,3 +406,5 @@ del pi
 del rep
 del t
 del temp
+del Penha
+del n

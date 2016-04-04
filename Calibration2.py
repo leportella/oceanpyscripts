@@ -22,36 +22,46 @@ dirOut = '/home/leportella/Documents/master/dissertacao/Latex/dis_controlada/fig
 
 
 ############################### Dados Medidos ###################################
+runfile('/home/leportella/scripts/pyscripts/myscripts/open/DadosNivelTemp.py', wdir='/home/leportella/scripts/pyscripts/myscripts')
+stsNivel = sts
+
+runfile('/home/leportella/scripts/pyscripts/myscripts/open/DadosCorrente.py', wdir='/home/leportella/scripts/pyscripts/myscripts')
+stsCorr = sts
+
 loc = {k: None for k in range(1, 4)}
 
 loc[1] = {'lat': -26.7682, 'lon': -48.6543}
 loc[2] = {'lat': -26.7643, 'lon': -48.6617}
 loc[3] = {'lat': -26.7051, 'lon': -48.6157}
 
+del sts
+del penha
 ############################### Dados Modelados #################################
-#runs = {'Regional01'}
-runs = ['Run01a']
+runs = ['Regional01']
+grade = 'reg'
+
+#runs = ['Run01a']
+#grade = 'local'
 
 for run in runs:
 
-    r = nc.Dataset('/home/leportella/cluster/run/' + run + '/ocean_his_local.nc','r')
+    r = nc.Dataset('/home/leportella/cluster/run/' + run + '/ocean_his_' + grade + '.nc','r')
     
     lonr = np.array(r.variables['lon_rho'][:])
     latr = np.array(r.variables['lat_rho'][:])
     otime = np.array(r.variables['ocean_time'][:])
+#    maskr = np.array(r.variables['mask_rho'][:])
 
     ######################### Pontos de Calibração na grade do modelo################
     modelo = {k: None for k in range(1, 4)}
     
     for k in range(1,4):
-        rowlat, collat = FindSimilar2(loc[k]['lat'],latr)
-        rowlon, collon = FindSimilar2(loc[k]['lon'],lonr)
-    #    #pontos de calibração real no modelo
-        modelo[k] = {'lat': latr[rowlat,collat]}
-        modelo[k]['lon']= lonr[rowlon,collon]
-        modelo[k]['nivel']= np.squeeze(r.variables['zeta'][:,rowlat,collon])
+        y, x = find_index_of_nearest_xy(latr,lonr,loc[1]['lat'],loc[1]['lon'])
+        modelo[k] = {'nivel': np.squeeze(r.variables['zeta'][:,y,x])}
+        modelo[k]['ubar'] = np.squeeze(r.variables['ubar_eastward'][:,y,x])
+        modelo[k]['vbar'] = np.squeeze(r.variables['vbar_northward'][:,y,x])
         
-    #    #calcula o tempo
+        #calcula o tempo
         modelo[k]['tempo']=[]
         initdate=datetime.datetime(2011,1,1,0,0,0) 
         for t in otime:
@@ -61,35 +71,39 @@ for run in runs:
     
         #igualando os vetores 
         for i in range(len(modelo[k]['tempo'])):
-            if sts[k]['tempo'][1]==modelo[k]['tempo'][i]:
+            if stsNivel[k]['tempo'][1]==modelo[k]['tempo'][i]:
                 idi= i
         
-        for i in range(len(sts[k]['tempo'])):
-            if modelo[1]['tempo'][-1]==sts[k]['tempo'][i]:
+        for i in range(len(stsNivel[k]['tempo'])):
+            if modelo[1]['tempo'][-1]==stsNivel[k]['tempo'][i]:
                 idf = i
                            
-        tmedido = sts[k]['tempo'][1:idf+1]
-        nmedido = sts[k]['previsaottide'][1:idf+1]
+        tmedido = stsNivel[k]['tempo'][1:idf+1]
+        nmedido = stsNivel[k]['previsaottide'][1:idf+1]
+        umedido = stsCorr[k]['u_depthav'][1:idf+1]        
+        vmedido = stsCorr[k]['v_depthav'][1:idf+1]    
         
         tmodelado = modelo[k]['tempo_local'][idi::]
         nmodelado = modelo[k]['nivel'][idi::]
+        umodelado = modelo[k]['ubar'][idi::]
+        vmodelado = modelo[k]['vbar'][idi::]
         
-#        ema = calcula_ema(nmedido,nmodelado)
-#        remq = calcula_remq(nmedido,nmodelado)
-#        ia = calcula_ia(nmedido,nmodelado)
-#        
-#        plt.figure(figsize=(15,5))
-#        plt.plot(tmedido,nmedido,'b')
-#        plt.plot(tmodelado,nmodelado,'r')
-#        plt.xlabel(u'Tempo')
-#        plt.ylabel(u'Nível (m)')
-#        plt.grid()
-#        plt.legend([u'Valores Medidos', u'Valores Modelados'])
-#        titulo = u'ST00' + str(k) + ' - EMA: %.2f  REMQ: %.3f  IA: %.2f'  % (ema, remq,ia)
-#        plt.title(titulo)
-#        plt.savefig(dirOut + 'Calibracao_' + run + 'ST00' + str(k) + '.png', dpi=200)
+        ema = calcula_ema(nmedido,nmodelado)
+        remq = calcula_remq(nmedido,nmodelado)
+        ia = calcula_ia(nmedido,nmodelado)
+        
+        plt.figure(figsize=(15,5))
+        plt.plot(tmedido,vmedido,'b')
+        plt.plot(tmodelado,vmodelado,'r')
+        plt.xlabel(u'Tempo')
+        plt.ylabel(u'Nível (m)')
+        plt.grid()
+        plt.legend([u'Valores Medidos', u'Valores Modelados'])
+        titulo = u'ST00' + str(k) + ' - EMA: %.2f  REMQ: %.2f  IA: %.2f'  % (ema, remq,ia)
+        plt.title(titulo)
+        plt.savefig(dirOut + 'Calibracao_' + run + 'ST00' + str(k) + '.png', dpi=200)
 
-#k=3
+#k=1
 #plt.figure(figsize=(15,5))
 #plt.plot(sts[k]['tempo'],sts[k]['previsaottide'],'b')
 #plt.plot(modelo[k]['tempo_local'],modelo[k]['nivel'],'r')
@@ -98,8 +112,8 @@ for run in runs:
 #plt.grid()
 #plt.legend([u'Valores Medidos', u'Valores Modelados'])
 ##titulo = u'ST00' + str(k) + ' - EMA: %.2f  REMQ: %.3f  IA: %.2f'  % (ema, remq,ia)
-##plt.title(titulo)
-#
+#plt.title(titulo)
+
 
 ########################## Plota Pontos ############################
 #m = Basemap(projection='cyl', resolution='f', llcrnrlon= -48.7, llcrnrlat= -26.8, urcrnrlon= -48.55, urcrnrlat= -26.65)
@@ -109,7 +123,7 @@ for run in runs:
 #m.fillcontinents(color='0.8',lake_color='aqua')
 #for k in range(1,4):
 #    m.plot(loc[k]['lon'],loc[k]['lat'], 'bo', markersize=10,label='Ponto Medido')
-#    m.plot(modelo[k]['lon'],modelo[k]['lat'], 'ro', markersize=5, label = 'Ponto Avaliado')
+#    m.plot(lonr[y,x],latr[y,x], 'ro', markersize=5, label = 'Ponto Avaliado')
 #leg = plt.legend(['Dado Medido','Dado Avaliado'],numpoints=1)
 ##m.legend()
 
@@ -121,3 +135,8 @@ for run in runs:
 #for k in range(1,4):
 #     m.plot(modelo[k]['lon'],modelo[k]['lat'], 'bo', markersize=5, label = 'Ponto Avaliado')
 ######################### Calcula Model Time ############################
+
+del i
+del k
+del t
+
