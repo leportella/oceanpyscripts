@@ -8,19 +8,18 @@ Created on Wed Mar 23 19:32:46 2016
 
 import sys
 
-sys.path.insert(0,'/home/leportella/scripts/pyscripts/myscripts/open')
+sys.path.insert(0,'/home/leportella/scripts/py/my/oceanpy/tools')
 
 import netCDF4 as nc
 import numpy as np
-from ncwork import *
-from generaltools import *
-import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
-from pyproj import Proj
+from ncwork import GetVariables
+from generaltools import uv2veldir_wind
+#import matplotlib.pyplot as plt
+#from mpl_toolkits.basemap import Basemap
+#from pyproj import Proj
 import datetime
-from windrose import WindroseAxes
 
-dirin='/home/leportella/Documents/master/dados/vento/CFSR_datafiles/files/'
+dirin='/home/leportella/Documents/master/dados/vento/CFSR_WindStress/wind_stress'
 dirOut = '/home/leportella/Documents/master/dissertacao/Latex/dis_controlada/figuras/'
 
 anos = range(2011,2016)
@@ -36,60 +35,76 @@ uv = [[],[]]
 
 for ano in anos:
     for mes in meses:
-        f = dirin + 'wnd10m.dd.%04d%02d.grb2.nc' % (ano, mes)
+        f = dirin + '/wndstrs.cdas1.%04d%02d.grb2.nc' % (ano, mes)
         dado = nc.Dataset(f)
         var = GetVariables(dado)
+        
+        print ano
+        print mes
         
         if c==1:
             lon1=var['lon']-360
             lat1=var['lat']
         
         for t in range(len(var['time'])):
-            u.append(var['U_GRD_L103'][t,:,:])
-            v.append(var['V_GRD_L103'][t,:,:])
+            u.append(var['U_FLX_L1_Avg_1'][t,:,:])
+            v.append(var['V_FLX_L1_Avg_1'][t,:,:])
             uv[0].append(u[t][3,12])
             uv[1].append(v[t][3,12])
-            tano = var['valid_date_time'][t][0]+var['valid_date_time'][t][1]+var['valid_date_time'][t][2]+                var['valid_date_time'][t][3]
-            tmes = var['valid_date_time'][t][4]+var['valid_date_time'][t][5]
-            tdia = var['valid_date_time'][t][6]+var['valid_date_time'][t][7]
-            thora =var['valid_date_time'][t][8]+var['valid_date_time'][t][9]
-            tempo.append(datetime.datetime(
-                    int(tano), int(tmes), int(tdia), int(thora), 0, 0))
+            tt = var['ref_date_time'][:]
+            tano = tt[t][0]+tt[t][1]+tt[t][2]+tt[t][3]
+            tmes = tt[t][4]+tt[t][5]
+            tdia = tt[t][6]+tt[t][7]
+            thora = tt[t][8]+tt[t][9]
+            temp = np.subtract(datetime.datetime(
+                    int(tano), int(tmes), int(tdia), int(thora), 0, 0), 
+                    datetime.datetime(2011,1,1,0,0,0))
+            tempo.append(temp.total_seconds())
         c=+1
+        dado.close()
                 
             
-cfsr = uv2veldir_wind(uv[0],uv[1])
-cfsr['tempo']=tempo
+#cfsr = uv2veldir_wind(uv[0],uv[1])
+#cfsr['tempo']=tempo
 
-#################### WINDROSE ################################
-plotaWindRose(cfsr['dir'],cfsr['vel'],maxYlabel=20, maxLeg=9, stepLeg=2)  
-plt.savefig(dirOut + 'Vento_CFSR_2011-15_Windrose.png',dpi=200)
+##################### GERA NETCDF DE FORCANTE ################################
+a = nc.Dataset('/home/leportella/projects/cdl/frc_bulk_windstrs.nc','r+')
+a.variables['lon'][:]= np.array(lon1)
+a.variables['lat'][:]= np.array(lat1)
+a.variables['time'][:]= np.array(tempo)
+a.variables['sustr'][:]= np.array(u)
+a.variables['svstr'][:]= np.array(v)
+a.close()
 
-################### PLOT VEL ################################
-plt.figure(figsize=(15,5))
-plt.plot(tempo[0:8758],cfsr['vel'][0:8758])
-plt.title(u'Velocidade do Vento - CFSR')
-plt.ylabel(u'Velocidade (m/s)')
-plt.grid()
-plt.savefig(dirOut + 'Vento_CFSR_2011-15_vel.png',dpi=200)
-
-################# HISTOGRAMA VEL VENTO  ###################
-PercentHistogram(cfsr['vel'],binss=50)
-plt.title(u'Histograma de Velocidade do Vento - CFSR')
-plt.ylabel(u'Percentual')
-plt.xlabel(u'Velocidade (m/s)')
-plt.xlim(0,10)
-plt.grid()
-plt.savefig(dirOut + 'Vento_CFSR_2011_histvel.png',dpi=200)
-
-################# HISTOGRAMA DIR VENTO  ###################
-PercentHistogram(cfsr['dir'],binss=50)
-plt.title(u'Histograma de Direção do Vento - CFSR')
-plt.ylabel(u'Percentual')
-plt.xlabel(u'Velocidade (m/s)')
-plt.xlim(0,360)
-plt.grid()
-plt.savefig(dirOut + 'Vento_CFSR_2011_histdir.png',dpi=200)
+##################### WINDROSE ################################
+#plotaWindRose(cfsr['dir'],cfsr['vel'],maxYlabel=20, maxLeg=9, stepLeg=2)  
+#plt.savefig(dirOut + 'Vento_CFSR_2011-15_Windrose.png',dpi=200)
+#
+#################### PLOT VEL ################################
+#plt.figure(figsize=(15,5))
+#plt.plot(tempo[0:8758],cfsr['vel'][0:8758])
+#plt.title(u'Velocidade do Vento - CFSR')
+#plt.ylabel(u'Velocidade (m/s)')
+#plt.grid()
+#plt.savefig(dirOut + 'Vento_CFSR_2011-15_vel.png',dpi=200)
+#
+################## HISTOGRAMA VEL VENTO  ###################
+#PercentHistogram(cfsr['vel'],binss=50)
+#plt.title(u'Histograma de Velocidade do Vento - CFSR')
+#plt.ylabel(u'Percentual')
+#plt.xlabel(u'Velocidade (m/s)')
+#plt.xlim(0,10)
+#plt.grid()
+#plt.savefig(dirOut + 'Vento_CFSR_2011_histvel.png',dpi=200)
+#
+################## HISTOGRAMA DIR VENTO  ###################
+#PercentHistogram(cfsr['dir'],binss=50)
+#plt.title(u'Histograma de Direção do Vento - CFSR')
+#plt.ylabel(u'Percentual')
+#plt.xlabel(u'Velocidade (m/s)')
+#plt.xlim(0,360)
+#plt.grid()
+#plt.savefig(dirOut + 'Vento_CFSR_2011_histdir.png',dpi=200)
 
 
 #lat,lon = np.meshgrid(lat1,lon1, sparse=False, indexing='ij')

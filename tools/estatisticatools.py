@@ -34,7 +34,7 @@ def calcula_remq(nmedido,nmodelado):
     
     remq=0
     for i in range(len(nmedido)):
-        remq = remq + ((nmodelado[i]-nmedido[i])**2)        
+        remq = remq + ((nmodelado[i]-nmedido[i])**2)
     remq = math.sqrt(remq/len(nmedido))
     
     return remq

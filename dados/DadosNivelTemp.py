@@ -4,8 +4,8 @@
 
 import sys
 
-sys.path.insert(0,'/home/leportella/scripts/pyscripts/myscripts/open')
-sys.path.insert(0,'/home/leportella/scripts/pyscripts/ttide_py-master/ttide')
+sys.path.insert(0,'/home/leportella/scripts/py/my/oceanpy/tools/')
+sys.path.insert(0,'/home/leportella/scripts/py/ttide_py-master/ttide')
 
 import csv
 import numpy as np
