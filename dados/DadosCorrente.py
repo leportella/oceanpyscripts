@@ -21,17 +21,20 @@ import pandas as pd
 
 WD = '/home/leportella/Documents/master/'
 directory = '{}dados/utilizacao/'.format(WD)
-outputDirectory = '{}dissertacao/Latex/dis_controlada/figuras/english'.format(WD)
+outputDirectory = '{}dissertacao/Latex/dis_controlada/figuras/english/'.format(WD)
 
 #################################################################################
 ##                                                                             ##
 ##                       DADOS ADCPS PIÇARRAS                                  ##
 ##                                                                             ##
 #################################################################################
+
+# Read CSV files
 csv01 = csv.reader(open(directory + 'ST001_Corrente.csv', 'r'),delimiter=',')
 csv02 = csv.reader(open(directory + 'ST002_Corrente.csv', 'r'),delimiter=',')
 csv03 =csv.reader(open(directory + 'ST003_Corrente.csv', 'r'),delimiter=',')
 
+# Transform CSV to array
 ST001=np.array(list(csv01)[1:], dtype=np.float64)
 ST002=np.array(list(csv02)[1:], dtype=np.float64)
 ST003=np.array(list(csv03)[1:], dtype=np.float64)
@@ -39,11 +42,13 @@ ST003=np.array(list(csv03)[1:], dtype=np.float64)
 STs = {1: ST001, 2: ST002, 3: ST003}
 sts = {k: None for k in range(1, 4)}
 
+# Reading CSVs
 for k in range(1,4): #loop pros 3 pontos
     t=[]
     rep = STs[k]
 
-    for i in range(0,len(rep)): #loop pra fazer o datenum (vetor tempo)
+    # transform date columns into datefield
+    for i in range(0,len(rep)): 
         t.append(
             datetime(
                 int(rep[i,2]), int(rep[i,1]), int(rep[i,0]),
@@ -51,6 +56,7 @@ for k in range(1,4): #loop pros 3 pontos
             )
         )
 
+    # ST003 is not in localtime
     if k==3:
         temp=np.subtract(t, timedelta(hours=3))
         t2 = pd.Series(temp)
@@ -64,6 +70,7 @@ for k in range(1,4): #loop pros 3 pontos
     numcels = (lim-6)/2
     c=1
 
+    # Read u and v data
     for n in range(6,lim-1,2):
 
         u = pd.Series(rep[:,n])
@@ -72,19 +79,22 @@ for k in range(1,4): #loop pros 3 pontos
         u[u>990]=np.nan
         v[v>990]=np.nan
 
-        sts[k]['u%s' % c] = u.interpolate()
-        sts[k]['v%s' % c] = v.interpolate()
+        # Interpolate unexistent data
+        sts[k]['ucomp%s' % c] = u.interpolate()
+        sts[k]['vcomp%s' % c] = v.interpolate()
 
-        out = uv2veldir(sts[k]['u%s' % c], sts[k]['v%s' % c])
+        # Convert uv to vel and dir
+        out = uv2veldir(sts[k]['ucomp%s' % c], sts[k]['vcomp%s' % c])
 
         sts[k]['vel%s' % c] = out['vel']
         sts[k]['dir%s' % c] = out['dir']
 
-        #plotaWindRose(out['dir'],out['vel']*100, maxYlabel=28, maxLeg=30,
-        #              stepLeg=5, language='en')
-        #name = '{}CurrentRose_ST00{}_Cel{}.png'.format(
-        #    outputDirectory, str(k), str(c))
-        #plt.savefig(name,dpi=200)
+        # Plot current rose per cel
+#        plotaWindRose(out['dir'],out['vel']*100, maxYlabel=28, maxLeg=40,
+#                      stepLeg=5, language='en')
+#        name = '{}CurrentRose_ST00{}_Cel{}.png'.format(
+#            outputDirectory, str(k), str(c))
+#        plt.savefig(name,dpi=200)
 
         c+=1
 
@@ -95,8 +105,8 @@ for k in range(1,4): #loop pros 3 pontos
 #################################################################################
 
     series = pd.DataFrame(sts[k])
-    us = [col for col in series if 'u' in col]
-    vs = [col for col in series if 'v' in col]
+    us = [col for col in series if 'ucomp' in col]
+    vs = [col for col in series if 'vcomp' in col]
 
     sts[k]['u_depthav'] = series[us][:].mean(axis=1)
     sts[k]['v_depthav'] = series[vs][:].mean(axis=1)
@@ -108,39 +118,39 @@ for k in range(1,4): #loop pros 3 pontos
     sts[k]['vel_depthav_cm'] =  sts[k]['vel_depthav']*100
 
 
-    plotaWindRose(sts[k]['dir_depthav'],sts[k]['vel_depthav']*100,
-                  maxYlabel=28, maxLeg=30, stepLeg=5, language='en')
-    name = '{}CurrentRose_ST00{}_DepthAv.png'.format(outputDirectory, str(k))
-    plt.savefig(name,dpi=200)
+#    plotaWindRose(sts[k]['dir_depthav'],sts[k]['vel_depthav']*100,
+#                  maxYlabel=28, maxLeg=40, stepLeg=5, language='en')
+#    name = '{}CurrentRose_ST00{}_DepthAv.png'.format(outputDirectory, str(k))
+#    plt.savefig(name,dpi=200)
+
+#
+#    uresidual_50h = []
+#    vresidual_50h = []
+#
+#    for i in range(0,len(sts[k]['u_depthav'])-50,50):
+#        uresidual_50h.append(np.mean(sts[k]['u_depthav'][i:i+50]))
+#        vresidual_50h.append(np.mean(sts[k]['v_depthav'][i:i+50]))
+#
+#    sts[k]['uresidual_50h']=uresidual_50h
+#    sts[k]['vresidual_50h']=vresidual_50h
 
 
-    uresidual_50h = []
-    vresidual_50h = []
-
-    for i in range(0,len(sts[k]['u_depthav'])-50,50):
-        uresidual_50h.append(np.mean(sts[k]['u_depthav'][i:i+50]))
-        vresidual_50h.append(np.mean(sts[k]['v_depthav'][i:i+50]))
-
-    sts[k]['uresidual_50h']=uresidual_50h
-    sts[k]['vresidual_50h']=vresidual_50h
-
-
-#    ############################### QUIVER CORRENTE #####################################
+#    ############################## QUIVER CORRENTE #####################################
 #    fig, (ax0, ax1) = plt.subplots(nrows=2, sharey=False, sharex=False, figsize=(11, 5))
 #
-#    q = ax0.quiver(sts[k]['u_depthav'],sts[k]['v_depthav'],scale=3)
-#    p = plt.quiverkey(q,1480,0.05,0.1,"0.1 m/s",coordinates='data',color='k')
+#    q = ax0.quiver(sts[k]['u_depthav'],sts[k]['v_depthav'],scale=4.5)
+#    p = plt.quiverkey(q,1480,0.04,0.1,"0.1 m/s",coordinates='data',color='k')
 #    ax0.axes.get_yaxis().set_visible(False)
 #    ax0.axes.get_xaxis().set_visible(False)
-#    ax0.set_ylim(-0.02,0.08)
+#    ax0.set_ylim(-0.09,0.09)
 #    ax0.set_xlim(0,len(sts[k]['u_depthav']))
-#    ax0.set_title('Vetores de Corrente - ST00' + str(k))
+#    ax0.set_title('Current Vectors - ST00' + str(k))
 #
 #    ax1.plot(sts[k]['tempo'],sts[k]['vel_depthav'])
 #    ax1.grid()
-#    ax1.set_ylim(0,0.3)
-#    ax1.set_title('Velocidade da Corrente - ST00' + str(k))
-#    plt.savefig(dirOut + 'Corrente_Quiver_ST00' + str(k) + '.png',dpi=200)
+#    ax1.set_ylim(0,0.42)
+#    ax1.set_title('Current Velocity - ST00' + str(k))
+#    plt.savefig(outputDirectory + 'Corrente_Quiver_ST00' + str(k) + '.png',dpi=200)
 
 #################################################################################
 ##                                                                             ##

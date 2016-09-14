@@ -399,10 +399,8 @@ penha['xout1']=penha['xout1']/100
 
 
 del STs
-del e
 del i
 del k
-del pi
 del rep
 del t
 del temp
