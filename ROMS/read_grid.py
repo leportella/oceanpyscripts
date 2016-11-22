@@ -5,11 +5,13 @@ Created on Sun Dec 13 11:23:20 2015
 
 @author: leportella
 """
+
 import sys
 
-sys.path.insert(0,'/home/leportella/scripts/pyscripts/myscripts/open')
+sys.path.insert(0,'/home/leportella/scripts/py/my/oceanpy/tools/')
 import netCDF4 as nc
-from ncwork import *
+from ncwork import (UTM2geo, rgfgrid2ROMS, InsertGridDimensions,
+                    CalculateCoriolis, CreateMask)
 from pyproj import Proj
 import romslab as rl
 
@@ -21,7 +23,7 @@ import romslab as rl
 ##                      CRIANDO GRID (BASE: RGFGRID)                         ##
 ##                                                                           ##
 ###############################################################################
-init=nc.Dataset('/home/leportella/Public/scregional_grdv10_delftversion_roms.nc')
+init=nc.Dataset('/home/leportella/Public/grids_v2/regional2_v01/regional2_v01_roms.nc')
 
 
 ###### Primeira etapa ############
@@ -50,6 +52,8 @@ out['lat_v']=latv[:]
 out['pm'],out['pn'],out['dndx'],out['dmde']=rl.get_metrics(out['lat_u'],out['lon_u'],out['lat_v'],out['lon_v'])
 out['f']= CalculateCoriolis(out['lat_rho'])
 
+out['angle']= rl.get_angle(out['lat_u'], out['lon_u'])
+
 ###### Creating Mask #######
 temp = CreateMask(out)
 out['mask_rho']=temp['mask_rho']
@@ -61,14 +65,10 @@ out['h'][out['h']<3]=3
 
 ###### Inserting data on NC #######
 
-grd = nc.Dataset('/home/leportella/projects/runs/Run00/scregional_grdv10.nc','r+')
+grd = nc.Dataset('/home/leportella/projects/files/regional2_v01/regional2_v01.nc','r+')
 InsertGridDimensions(grd,out)
 grd.close()
 
-
-import matplotlib.pyplot as plt
-plt.pcolor(out['mask_rho'])
-plt.colorbar()
 
 ######################## GRADE ANINHADA ##########################
 #grd2 = nc.Dataset('/home/leportella/projects/teste09/scregional_grd_v06_an.nc','r+')
@@ -111,9 +111,3 @@ plt.colorbar()
 #grd2.variables['y_v'][:]=yv[:]
 #
 #grd2.close()
-#
-#
-#
-#
-#import shutil
-#shutil.copy2('/home/leportella/projects/teste01/grd_spherical.nc', '/home/leportella/projects/teste01/grd_spherical_backup.nc')

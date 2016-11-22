@@ -21,8 +21,8 @@ def FindNHIS(dt,hora=1):
     """
     nhis = (hora*60*60.)/(float(dt))
     print 'Numero para NHIS: ' + str(nhis)
-    
+
    
-dt=30
-FindTS(dt,40)   
-FindNHIS(dt,1)
+dt=5
+FindTS(dt,50)   
+FindNHIS(dt,1/6.)

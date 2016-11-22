@@ -107,5 +107,3 @@ def to_percent(y, position):
         return s + r'$\%$'
     else:
         return s + '%'
-
-

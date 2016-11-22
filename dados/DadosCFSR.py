@@ -44,13 +44,17 @@ for ano in anos:
         
         if c==1:
             lon1=var['lon']-360
-            lat1=var['lat']
+            lat1=var['lat'][::-1]
         
         for t in range(len(var['time'])):
-            u.append(var['U_FLX_L1_Avg_1'][t,:,:])
-            v.append(var['V_FLX_L1_Avg_1'][t,:,:])
+            u_cfsr = var['U_FLX_L1_Avg_1'][t,:,:]
+            v_cfsr = var['V_FLX_L1_Avg_1'][t,:,:]
+            u.append(u_cfsr[::-1,:])
+            v.append(v_cfsr[::-1,:])
+            
             uv[0].append(u[t][3,12])
             uv[1].append(v[t][3,12])
+            
             tt = var['ref_date_time'][:]
             tano = tt[t][0]+tt[t][1]+tt[t][2]+tt[t][3]
             tmes = tt[t][4]+tt[t][5]
@@ -63,12 +67,13 @@ for ano in anos:
         c=+1
         dado.close()
                 
+
             
 #cfsr = uv2veldir_wind(uv[0],uv[1])
 #cfsr['tempo']=tempo
 
 ##################### GERA NETCDF DE FORCANTE ################################
-a = nc.Dataset('/home/leportella/projects/cdl/frc_bulk_windstrs.nc','r+')
+a = nc.Dataset('/home/leportella/projects/cdl/frc_bulk_windstrs_latinvertido.nc','r+')
 a.variables['lon'][:]= np.array(lon1)
 a.variables['lat'][:]= np.array(lat1)
 a.variables['time'][:]= np.array(tempo)
@@ -88,7 +93,8 @@ a.close()
 #plt.grid()
 #plt.savefig(dirOut + 'Vento_CFSR_2011-15_vel.png',dpi=200)
 #
-################## HISTOGRAMA VEL VENTO  ###################
+####:w
+############## HISTOGRAMA VEL VENTO  ###################
 #PercentHistogram(cfsr['vel'],binss=50)
 #plt.title(u'Histograma de Velocidade do Vento - CFSR')
 #plt.ylabel(u'Percentual')

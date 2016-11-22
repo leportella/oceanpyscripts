@@ -8,6 +8,7 @@ Created on Sun Dec 13 13:59:29 2015
 import netCDF4 as nc
 import numpy as np
 from math import radians, sin
+from datetime import datetime
 
 
 def GetVariables(filenc):
@@ -107,6 +108,7 @@ def rgfgrid2ROMS(filenc):
         
         return ng
 
+
 def CreateMask(dic):
         """    
         ng = CreateMask(dic)
@@ -153,6 +155,7 @@ def CreateMask(dic):
         
         return ng
         
+        
 def InsertGridDimensions(filenc,dirin):
     """
     """
@@ -182,12 +185,14 @@ def InsertGridDimensions(filenc,dirin):
         filenc.variables['pn'][:] = dirin['pn'][:]        
         filenc.variables['f'][:] = dirin['f'][:]  
         filenc.variables['h'][:] = dirin['h'][:] 
+        filenc.variables['angle'][:] = dirin['angle'][:]
         filenc.variables['mask_rho'][:]=dirin['mask_rho'][:]
         filenc.variables['mask_psi'][:]=dirin['mask_psi'][:]
         filenc.variables['mask_u'][:]=dirin['mask_u'][:]
         filenc.variables['mask_v'][:]=dirin['mask_v'][:]
         
     return 'ok'
+    
     
 def geo2UTM(lon,lat,myproj):  
     x = np.zeros([len(lon),len(lon[0])])
@@ -208,3 +213,64 @@ def UTM2geo(x,y,myproj):
             lon[i,j], lat[i,j] = myproj(x[i,j], y[i,j], inverse=True)
     return lon, lat
     
+    
+def ReadROMSResults(run, grid, num_files, uv=False):
+    data = {}
+    
+    for num in range(1, num_files):
+        f = ('/home/leportella/cluster/run/{}/'
+             'ocean_his_{}_000{}.nc').format(run, grid, num)
+        model = nc.Dataset(f, 'r')
+    
+        if num == 1:
+            reftime = np.array(model.variables['ocean_time'][:])
+            zeta = np.array(model.variables['zeta'][:])
+            if uv:
+                ubar = np.array(model.variables['ubar_eastward'][:])
+                vbar = np.array(model.variables['vbar_northward'][:])
+            data['lonr'] = np.array(model.variables['lon_rho'][:])
+            data['latr'] = np.array(model.variables['lat_rho'][:])
+        else:
+            reftime = np.hstack(
+                (reftime, np.array(model.variables['ocean_time'][:]))
+            )
+            zeta = np.concatenate(
+                (zeta, np.array(model.variables['zeta'][:])),
+                axis=0
+            )
+            if uv:
+                ubar = np.concatenate(
+                    (ubar, np.array(model.variables['ubar_eastward'][:])),
+                    axis=0
+                )
+                vbar = np.concatenate(
+                    (vbar, np.array(model.variables['vbar_northward'][:])),
+                    axis=0
+                )
+    
+        data['reftime'] = reftime
+        data['zeta'] = zeta
+        if uv:
+            data['u'] = ubar
+            data['v'] = vbar
+        return data
+
+
+def FindTimeVector(refdate, timevector, delta='seconds'):
+    """
+    Given a time vector from ROMS input, it gives the real time vector
+    based on the refdate 
+    """
+    time = []
+    initdate = datetime(int(refdate[0:4]),
+                                 int(refdate[4:6]), 
+                                 int(refdate[6:]),
+                                 0, 0, 0)
+    for t in timevector:
+        if delta=='seconds':
+            time.append(np.add(initdate, timedelta(seconds=int(t))))
+        elif delta=='days':
+            time.append(np.add(initdate, timedelta(days=int(t))))
+        elif delta=='hours':
+            time.append(np.add(initdate, timedelta(hours=int(t))))
+    return time

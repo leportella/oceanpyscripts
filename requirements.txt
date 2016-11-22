@@ -1,0 +1,9 @@
+matplotlib
+numpy
+windrose
+csv
+pandas
+netcdf4
+basemap
+pyproj
+

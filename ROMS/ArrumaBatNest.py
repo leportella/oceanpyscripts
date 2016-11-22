@@ -7,14 +7,15 @@ Created on Sun Jan 31 21:42:21 2016
 
 import sys
 
-sys.path.insert(0,'/home/leportella/scripts/pyscripts/myscripts/open')
+sys.path.insert(0,'/home/leportella/scripts/py/my/oceanpy/tools')
 import netCDF4 as nc
-from ncwork import *
+from ncwork import GetVariables, CreateMask
 import numpy as np
 import matplotlib.pyplot as plt
 
-grd1 = nc.Dataset('/home/leportella/Public/sclocal_scregv10_5x_batruim_roms.nc','r+')
-grd2 = nc.Dataset('/home/leportella/Public/sclocal_scregv10_5x_batboa_roms.nc','r+')
+path = '/home/leportella/Public/regional2_v01/'
+grd1 = nc.Dataset('{}local_reg2v01_5x_batruim.nc'.format(path),'r+')
+grd2 = nc.Dataset('{}local_reg2v01_5x_batarrumada.nc'.format(path),'r+')
 
 var = GetVariables(grd1)
 var['h']=grd2.variables['h'][:]
@@ -56,9 +57,11 @@ hfinal = (h * h2) + ((1-h) * h1)
 plt.pcolor(hfinal)
 
 hfinal[hfinal<3]=3
-#
-grdfinal = nc.Dataset('/home/leportella/projects/runs/Run00/sclocal_scregv10_5x.nc','r+')
+
+outpath = '/home/leportella/projects/files/regional2_v01/'
+grdfinal = nc.Dataset('local_reg2v01_5x.nc','r+')
 grdfinal.variables['h'][:]=hfinal[:]
+
 #grdfinal.variables['mask_rho'][:]=temp['mask_rho'][:]
 #grdfinal.variables['mask_psi'][:]=temp['mask_psi'][:]
 #grdfinal.variables['mask_u'][:]=temp['mask_u'][:]
@@ -72,8 +75,5 @@ grdfinal.variables['h'][:]=hfinal[:]
 #grdfinal.variables['y_u'][:]=grd1.variables['y_u'][:]
 #grdfinal.variables['x_v'][:]=grd1.variables['x_v'][:]
 #grdfinal.variables['y_v'][:]=grd1.variables['y_v'][:]
-
-
-
 
 #grd2.variables['h'][:]=hfinal[:]
