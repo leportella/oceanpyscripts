@@ -37,11 +37,13 @@ loc[3] = {'lat': -26.7051, 'lon': -48.6157} #(737213.8175838569, 7044008.0283750
 
 ############################### Dados Modelados #################################
 
-run = 'run10_regional2_mare'
+run = 'run17_run15_visc_mix_s'
 grid = 'local'
-num_files = 2
+num_files = 7
 
+print(datetime.now())
 data = ReadROMSResults(run, grid, num_files, uv=False)
+print(datetime.now())
 
 ######################### Pontos de Calibração na grade do modelo################
 
@@ -66,7 +68,7 @@ zeta = data['zeta'][:, x, y]
 refdate = '20110101'
 timevector = data['reftime']
 data['time'] = FindTimeVector(refdate, timevector)
-data['localtime'] = np.subtract(time, timedelta(hours=3))
+data['localtime'] = np.subtract(data['time'], timedelta(hours=3))
 
 # Igualando os vetores dos dados modelados e medidos
 for i in range(len(data['time'])):
@@ -111,6 +113,7 @@ def plota_comparacao_modelado_medido_zeta(save=False):
         name = '{}/Calibracao_{}_ST00{}_Nivel.png'.format(dirOut, run, k)
         plt.savefig(name, dpi=200)
     plt.close()
+    print('ok')
 
 def plota_comparacao_modelado_medido_uv(save=False):
     plt.figure(figsize=(15,5))

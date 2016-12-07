@@ -21,9 +21,13 @@ def FindSimilar(num,arr):
         out is the id where in vector there is a similar number
     """ 
     arrtemp = np.absolute((arr-(num)))
+    try: 
+        row,col = np.where(arrtemp==np.min(arrtemp))
+        return row,col
+    except: 
+        row = np.where(arrtemp==np.min(arrtemp))
+        return row
     
-    row,col = np.where(arrtemp==np.min(arrtemp))
-    return row,col
 
 def find_index_of_nearest_xy(y_array, x_array, y_point, x_point):
     distance = (y_array-y_point)**2 + (x_array-x_point)**2

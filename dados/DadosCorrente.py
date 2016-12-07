@@ -12,7 +12,7 @@ sys.path.insert(0, '/home/leportella/scripts/py/my/oceanpy/tools')
 
 import csv
 import numpy as np
-from generaltools import uv2veldir
+from generaltools import uv2veldir, FindSimilar
 from GraphicTools import plotaWindRose
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
@@ -21,7 +21,7 @@ import pandas as pd
 
 WD = '/home/leportella/Documents/master/'
 directory = '{}dados/utilizacao/'.format(WD)
-outputDirectory = '{}dissertacao/Latex/dis_controlada/figuras/english/'.format(WD)
+outputDirectory = '{}dissertacao/Latex/dis_controlada/figuras/'.format(WD)
 
 #################################################################################
 ##                                                                             ##
@@ -117,6 +117,34 @@ for k in range(1,4): #loop pros 3 pontos
     sts[k]['dir_depthav'] = out2['dir']
     sts[k]['vel_depthav_cm'] =  sts[k]['vel_depthav']*100
 
+
+#k=2
+#previsao = pd.Series(sts[k]['v_depthav'])
+#previsao.to_csv('/home/leportella/Documents/master/dados/utilizacao/tratados/st00{}_v_depthavg.csv'.format(k))
+
+
+#    ############################## HISTOGRAMA ACUMULADO VELOCIDADE  #####################################
+#    plt.figure()
+#    n, bins, patches = plt.hist(sts[k]['vel_depthav'], 100, normed=1,
+#                                histtype='step', cumulative=True, color='b')
+#    n90 = FindSimilar(0.9, n)
+#    n50 = FindSimilar(0.5, n)
+#    n25 = FindSimilar(0.25, n)
+#    plt.plot([bins[n90[0][0]]]*2, [0, 0.9], 'k')
+#    plt.plot([0, bins[n90[0][0]]], [0.9, 0.9], 'k')
+#    
+#    plt.plot([bins[n50[0][0]]]*2, [0, 0.5], 'k')
+#    plt.plot([0, bins[n50[0][0]]], [0.5, 0.5], 'k')
+#    
+#    plt.plot([bins[n25[0][0]]]*2, [0, 0.25], 'k')
+#    plt.plot([0, bins[n25[0][0]]], [0.25, 0.25], 'k')
+#    plt.grid(True)
+#    plt.ylim(0, 1.05)
+#    plt.xlim(0, np.max(sts[k]['vel_depthav']))
+#    plt.xlabel('Velocidade - m/s')
+#    plt.ylabel('Percentual')
+#    plt.title('Histograma Acumulado da Velocidade da Corrente - ST00{}'.format(k))
+#    plt.savefig(outputDirectory + 'ST00' + str(k) + '_His_CurrentVel_Acumulado.png',dpi=200)
 
 #    plotaWindRose(sts[k]['dir_depthav'],sts[k]['vel_depthav']*100,
 #                  maxYlabel=28, maxLeg=40, stepLeg=5, language='en')

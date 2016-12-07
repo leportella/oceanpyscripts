@@ -85,6 +85,11 @@ for k in range(1,4): #loop pros 3 pontos
 
     sts[k]['previsaottide'] = sts[k]['xout1'].squeeze()/100 
     
+#
+#k=2
+#previsao = pd.Series(sts[k]['previsaottide'])
+#previsao.to_csv('/home/leportella/Documents/master/dados/utilizacao/tratados/st00{}_nivel_previsto.csv'.format(k))
+#    
 #    exportsts = pd.DataFrame(sts[k])
 #    exportsts.to_csv(direct+'DF_NivelTemp_' + str (k) + '.csv')
 
@@ -205,6 +210,9 @@ penha['freq'] = fft.fftfreq(len(penha['spectrum']))
 penha['nameu1'], penha['fu1'], penha['tideconout1'], penha['xout1'] = t_tide(n, dt=1, lat=np.array(-25))
 
 penha['xout1']=penha['xout1']/100
+
+
+
 
 
 
@@ -396,6 +404,23 @@ penha['xout1']=penha['xout1']/100
 #plt.xlim(-1.2,1.2)
 #plt.grid()
 #plt.savefig(dirOut + 'Hist_nivel_Penha.png',dpi=200)
+
+
+
+
+#-----------------------------------------------------------------------
+
+# Separando a temperatura de acordo com os dados de vento
+
+temperatura = []
+tempo = []
+for i in range(9,len(sts[1]['tempinterp']), 12):
+    temperatura.append(sts[1]['tempinterp'][i])
+    tempo.append(sts[1]['tempo'][i])
+
+vento_tem = cfsr['time'][924:1058+1]
+vento_dir = cfsr['dir'][924:1058+1]
+vento_vel = cfsr['vel'][924:1058+1]
 
 
 del STs

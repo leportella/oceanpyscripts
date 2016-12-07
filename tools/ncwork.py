@@ -8,7 +8,7 @@ Created on Sun Dec 13 13:59:29 2015
 import netCDF4 as nc
 import numpy as np
 from math import radians, sin
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def GetVariables(filenc):
@@ -217,13 +217,14 @@ def UTM2geo(x,y,myproj):
 def ReadROMSResults(run, grid, num_files, uv=False):
     data = {}
     
-    for num in range(1, num_files):
+    for num in range(1, num_files+1):
         f = ('/home/leportella/cluster/run/{}/'
              'ocean_his_{}_000{}.nc').format(run, grid, num)
+        print('reading file: {}'.format(f))
         model = nc.Dataset(f, 'r')
     
         if num == 1:
-            reftime = np.array(model.variables['ocean_time'][:])
+            reftime = np.array(model.variables['ocean_time'][:])           
             zeta = np.array(model.variables['zeta'][:])
             if uv:
                 ubar = np.array(model.variables['ubar_eastward'][:])
@@ -248,12 +249,12 @@ def ReadROMSResults(run, grid, num_files, uv=False):
                     axis=0
                 )
     
-        data['reftime'] = reftime
-        data['zeta'] = zeta
-        if uv:
-            data['u'] = ubar
-            data['v'] = vbar
-        return data
+    data['reftime'] = reftime
+    data['zeta'] = zeta
+    if uv:
+        data['u'] = ubar
+        data['v'] = vbar
+    return data
 
 
 def FindTimeVector(refdate, timevector, delta='seconds'):
