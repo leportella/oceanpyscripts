@@ -35,34 +35,54 @@ loc[1] = {'lat': -26.7682, 'lon': -48.6543}
 loc[2] = {'lat': -26.7643, 'lon': -48.6617}
 loc[3] = {'lat': -26.7051, 'lon': -48.6157} #(737213.8175838569, 7044008.028375013)
 
-############################### Dados Modelados #################################
 
-run = 'run17_run15_visc_mix_s'
-grid = 'local'
-num_files = 7
-
-print(datetime.now())
-data = ReadROMSResults(run, grid, num_files, uv=False)
-print(datetime.now())
+xy = {
+    'local': {
+        1: {'x': 68, 'y': 34},
+        2: {'x': 73, 'y': 27},
+        3: {'x': 138, 'y': 74},
+    },
+    'reg': {
+        1: {'x': 206, 'y': 8},
+        2: {'x': 207, 'y': 7},
+        3: {'x': 220, 'y': 16},
+    }
+}
 
 ######################### Pontos de Calibração na grade do modelo################
-
+#
 # Define ponto pra calcular calibração
-k = 3
+k = 1
+#
+#run = 'run27_run24_fla+chapman'
+#grid = 'reg'
+#num_files = 1
+#data = ReadROMSResults(run, grid, num_files, uv=True)
+##
+### Encontra o ponto de calibração na grade
+#x, y = find_index_of_nearest_xy(
+#    data['latr'], 
+#    data['lonr'],
+#    loc[k]['lat'],
+#    loc[k]['lon']
+#)
 
-# Encontra o ponto de calibração na grade
-x, y = find_index_of_nearest_xy(
-    data['latr'],
-    data['lonr'],
-    loc[k]['lat'],
-    loc[k]['lon']
-)
+
+
+############################### Dados Modelados #################################
+
+run = 'run27_run24_fla+chapman'
+grid = 'reg'
+num_files = 5
+print(datetime.now())
+data = ReadROMSResults(run, grid, num_files, x=xy[grid][k]['x'], y=xy[grid][k]['y'], uv=True)
+print(datetime.now())
+
 
 # Pega o dado exclusivo daquele ponto
-zeta = data['zeta'][:, x, y]
-# ubar = data['ubar'][:, x, y]
-# vbar = data['vbar'][:, x, y]
-
+zeta = data['zeta']
+ubar = data['u']
+vbar = data['v']
 
 # Arrumando o tempo de referencia pra tempo real e tempo local
 refdate = '20110101'
@@ -70,33 +90,57 @@ timevector = data['reftime']
 data['time'] = FindTimeVector(refdate, timevector)
 data['localtime'] = np.subtract(data['time'], timedelta(hours=3))
 
+if len(zeta) == len(ubar) == len(vbar) == len(data['time']) == len(data['localtime']):
+    print ('Tudo ok nos dados modelados!')
+
+
 # Igualando os vetores dos dados modelados e medidos
-for i in range(len(data['time'])):
+for i in range(len(data['localtime'])):
     if stsNivel[k]['tempo'][1] == data['localtime'][i]:
         idi= i
-
-for i in range(len(stsNivel[k]['tempo'])):
-    if data['localtime'][-1] == stsNivel[k]['tempo'][i]:
+        print('idi: ' + str(idi))
+    if stsNivel[k]['tempo'][-1] == data['localtime'][i]:
         idf = i
+        print('idf: ' + str(idf))
+        
+tmedido = stsNivel[k]['tempo']
+nmedido = stsNivel[k]['previsaottide']
+umedido = stsCorr[k]['u_depthav'][1:-1]
+vmedido = stsCorr[k]['v_depthav'][1:-1]
 
-tmedido = stsNivel[k]['tempo'][1:idf+1]
-nmedido = stsNivel[k]['previsaottide'][1:idf+1]
-umedido = stsCorr[k]['u_depthav'][1:idf+1]
-vmedido = stsCorr[k]['v_depthav'][1:idf+1]
+if len(tmedido) == len(nmedido) == len(umedido) == len(vmedido):
+    print(u'Dados medidos são consistentes')
 
-tmodelado = data['localtime'][idi::]
-nmodelado = zeta[idi::]
-umodelado = ubar[idi::]
-vmodelado = vbar[idi::]
+tmodelado = data['localtime'][idi-1:idf+1]
+nmodelado = zeta[idi-1:idf+1]
+umodelado = ubar[idi-1:idf+1]
+vmodelado = vbar[idi-1:idf+1]
 
-ema = calcula_ema(nmedido, nmodelado)
-remq = calcula_remq(nmedido, nmodelado)
-ia = calcula_ia(nmedido, nmodelado)
+if len(tmodelado) == len(nmodelado) == len(umodelado) == len(vmodelado):
+    print(u'Dados modelados são consistentes')
 
+# checks
+if len(tmedido) == len(tmodelado):
+    print('Vetores de tamanho ok!')
+    if tmedido[0] == tmodelado[0]:
+        print ('Tempos iniciais ok!')
+        if tmedido[1] == tmodelado[1]:
+            print('delta t ok!')
+            if tmedido[-1] == tmodelado[-1]:
+                print('Tempos finais ok!')
+                print('Tudo ok! Ok ahead!')
 
-plota_comparacao_modelado_medido_zeta()
+ema_nivel = calcula_ema(nmedido, nmodelado)
+remq_nivel = calcula_remq(nmedido, nmodelado)
+ia_nivel = calcula_ia(nmedido, nmodelado)
 
+ema_u = calcula_ema(umedido, umodelado)
+remq_u = calcula_remq(umedido, umodelado)
+ia_u = calcula_ia(umedido, umodelado)
 
+ema_v = calcula_ema(vmedido, vmodelado)
+remq_v = calcula_remq(vmedido, vmodelado)
+ia_v = calcula_ia(vmedido, vmodelado)
 
 
 def plota_comparacao_modelado_medido_zeta(save=False):
@@ -107,7 +151,7 @@ def plota_comparacao_modelado_medido_zeta(save=False):
     plt.ylabel(u'Nível (m)')
     plt.grid()
     plt.legend([u'Valores Medidos', u'Valores Modelados'])
-    titulo = u'ST00' + str(k) + ' - EMA: %.2f  REMQ: %.2f  IA: %.2f'  % (ema, remq, ia)
+    titulo = u'ST00' + str(k) + ' - EMA: %.2f  REMQ: %.2f  IA: %.2f' % (ema_nivel, remq_nivel, ia_nivel)
     plt.title(titulo)
     if save:
         name = '{}/Calibracao_{}_ST00{}_Nivel.png'.format(dirOut, run, k)
@@ -123,7 +167,7 @@ def plota_comparacao_modelado_medido_uv(save=False):
     plt.ylabel(u'Velocidade - Componente U (m/s)')
     plt.grid()
     plt.legend([u'Valores Medidos', u'Valores Modelados'])
-    titulo = u'ST00' + str(k) + ' - EMA: %.2f  REMQ: %.2f  IA: %.2f'  % (ema, remq,ia)
+    titulo = u'ST00' + str(k) + ' - EMA: %.2f  REMQ: %.2f  IA: %.2f'  % (ema_u, remq_u, ia_u)
     plt.title(titulo)
     if save:
         name = '{}/Calibracao_{}_ST00{}_U.png'.format(dirOut, run, k)
@@ -137,12 +181,15 @@ def plota_comparacao_modelado_medido_uv(save=False):
     plt.ylabel(u'Velocidade - Componente v (m/s)')
     plt.grid()
     plt.legend([u'Valores Medidos', u'Valores Modelados'])
-    titulo = u'ST00' + str(k) + ' - EMA: %.2f  REMQ: %.2f  IA: %.2f'  % (ema, remq,ia)
+    titulo = u'ST00' + str(k) + ' - EMA: %.2f  REMQ: %.2f  IA: %.2f'  % (ema_v, remq_v, ia_v)
     plt.title(titulo)
     if save:
         name = '{}/Calibracao_{}_ST00{}_V.png'.format(dirOut, run, k)
         plt.savefig(name, dpi=200)
     plt.close()
+
+plota_comparacao_modelado_medido_zeta(save=True)
+plota_comparacao_modelado_medido_uv(save=True)
 
 
 ########################## Plota Pontos ############################
