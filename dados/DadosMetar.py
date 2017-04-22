@@ -7,7 +7,7 @@ Created on Sun Jan 24 13:47:55 2016
 
 import sys
 
-sys.path.insert(0,'/home/leportella/scripts/pyscripts/myscripts/open')
+sys.path.insert(0,'/home/leportella/scripts/py/my/oceanpy/tools')
 
 import csv
 import numpy as np
@@ -40,7 +40,7 @@ met={'tempo':pd.Series(t)}
 met['dir']=pd.Series(metar[:,5])
 met['vel']=pd.Series(metar[:,6])
 
-met['vel'] = np.multiply(met['vel'],0.5144)
+met['vel'] = np.multiply(met['vel'], 0.5144)
 
 temp = met['tempo']
 dup = temp.duplicated()
@@ -49,16 +49,27 @@ met['vel'] = met['vel'][dup==False]
 met['dir'] = met['dir'][dup==False]
 met['tempo'] = met['tempo'][dup==False]
 
-aa=np.where(met['vel']==np.nan)
-
 a = np.isnan(met['vel'])
 b=np.logical_not(a)
 temp = np.zeros(len(met['tempo'][a]))
+vel_interp = met['vel'].interpolate()
+
+
+
 
 
 plt.figure(figsize=(15,5))
-plt.plot(met['tempo'][b], met['vel'][b],'.')
-plt.plot(met['tempo'][a].values, temp,'.r')
+plt.plot(met['tempo'], met['vel'])
+plt.title(u'Velocidade do Vento - METAR')
+plt.ylabel(u'Velocidade (m/s)')
+#plt.xlim(met['tempo'][0], met['tempo'][-1])
+plt.grid()
+plt.savefig(dirOut + 'Vento_METAR_2011vel.png',dpi=200)
+
+
+plt.figure(figsize=(15,5))
+plt.plot(met['tempo'][b], met['vel'][b],'b')
+plt.plot(met['tempo'][a].values, vel_interp[a],'.r')
 plt.xlabel(u'Tempo')
 plt.ylabel(u'Velocidade (m/s)')
 plt.grid()

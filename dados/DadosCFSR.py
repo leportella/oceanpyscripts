@@ -21,10 +21,15 @@ import datetime
 
 # dirin='/home/leportella/Documents/master/dados/vento/CFSR_WindStress/wind_stress'
 dirin='/home/leportella/Documents/master/dados/vento/CFSR_UV_1h'
-dirOut = '/home/leportella/Documents/master/dissertacao/Latex/dis_controlada/figuras/'
+dirOut = '/home/leportella/Documents/master/dissertacao/Latex/dis_controlada/figuras/vento/'
 
-anos = range(2011,2016)
-meses = range(1,13)
+anos = range(2011, 2016)
+#anos=[2011]
+meses = range(1,13); epoca = r'Total'
+#meses=[12, 1, 2]; epoca = r'Verao'
+#meses=[3, 4, 5]; epoca = u'Outono'
+#meses=[6, 7, 8]; epoca = u'Inverno'
+#meses=[9, 10, 11]; epoca = u'Primavera'
 
 
 c=1
@@ -32,6 +37,7 @@ c=1
 u=[]
 v=[]
 tempo=[]
+tempo_minutos=[]
 uv = [[],[]]
 time = []
 
@@ -50,8 +56,8 @@ for ano in anos:
             lat1=var['lat'][::-1]
         
         for t in range(len(var['time'])):
-            # u_cfsr = var['U_FLX_L1_Avg_1'][t,:,:]
-            # v_cfsr = var['V_FLX_L1_Avg_1'][t,:,:]
+#            u_cfsr = var['U_FLX_L1_Avg_1'][t,:,:]
+#            v_cfsr = var['V_FLX_L1_Avg_1'][t,:,:]
             u_cfsr = var['V_GRD_L103'][t,:,:]
             v_cfsr = var['U_GRD_L103'][t,:,:]
         
@@ -59,8 +65,8 @@ for ano in anos:
             u.append(u_cfsr[::-1,:])
             v.append(v_cfsr[::-1,:])
             
-            #uv[0].append(u[t][21,17])
-            #uv[1].append(v[t][21,17])
+            uv[0].append(u[t][11,13])
+            uv[1].append(v[t][11,13])
             
             tt = var['ref_date_time'][:]
             tano = tt[t][0]+tt[t][1]+tt[t][2]+tt[t][3]
@@ -71,6 +77,7 @@ for ano in anos:
                     int(tano), int(tmes), int(tdia), int(thora), 0, 0), 
                     datetime.datetime(2011,1,1,0,0,0))
             tempo.append(temp.total_seconds())
+            tempo_minutos.append(temp.total_seconds()/60.)
             time.append(datetime.datetime(
                 int(tano), int(tmes), int(tdia), int(thora), 0, 0))
         c=+1
@@ -92,54 +99,55 @@ cfsr['time'] = time
 #a.close()
 
 ##################### WINDROSE ################################
-#plotaWindRose(cfsr['dir'],cfsr['vel'],maxYlabel=20, maxLeg=9, stepLeg=2)  
-#plt.savefig(dirOut + 'Vento_CFSR_2011-15_Windrose.png',dpi=200)
+plotaWindRose(cfsr['dir'],cfsr['vel'],maxYlabel=20, maxLeg=14, stepLeg=2)  
+plt.savefig(dirOut + 'Vento_CFSR_2011-15_Windrose_{}.png'.format(epoca), dpi=200)
 #
 #################### PLOT VEL ################################
-#plt.figure(figsize=(15,5))
-#plt.plot(tempo[0:8758],cfsr['vel'][0:8758])
-#plt.title(u'Velocidade do Vento - CFSR')
-#plt.ylabel(u'Velocidade (m/s)')
-#plt.grid()
-#plt.savefig(dirOut + 'Vento_CFSR_2011-15_vel.png',dpi=200)
+plt.figure(figsize=(15,5))
+plt.plot(time, cfsr['vel'])
+plt.title(u'Velocidade do Vento - {} - CFSR'.format(epoca))
+plt.ylabel(u'Velocidade (m/s)')
+plt.xlim(time[0], time[-1])
+plt.grid()
+plt.savefig(dirOut + 'Vento_CFSR_2011-15_vel_{}.png'.format(epoca), dpi=200)
 #
-####:w
-############## HISTOGRAMA VEL VENTO  ###################
-#PercentHistogram(cfsr['vel'],binss=50)
-#plt.title(u'Histograma de Velocidade do Vento - CFSR')
-#plt.ylabel(u'Percentual')
-#plt.xlabel(u'Velocidade (m/s)')
-#plt.xlim(0,10)
-#plt.grid()
-#plt.savefig(dirOut + 'Vento_CFSR_2011_histvel.png',dpi=200)
-#
-################## HISTOGRAMA DIR VENTO  ###################
-#PercentHistogram(cfsr['dir'],binss=50)
-#plt.title(u'Histograma de Direção do Vento - CFSR')
-#plt.ylabel(u'Percentual')
-#plt.xlabel(u'Velocidade (m/s)')
-#plt.xlim(0,360)
-#plt.grid()
-#plt.savefig(dirOut + 'Vento_CFSR_2011_histdir.png',dpi=200)
 
+############## HISTOGRAMA VEL VENTO  ###################
+PercentHistogram(cfsr['vel'],binss=50)
+plt.title(u'Histograma de Velocidade do Vento - {} - CFSR'.format(epoca))
+plt.ylabel(u'Percentual')
+plt.xlabel(u'Velocidade (m/s)')
+plt.xlim(0,10)
+plt.grid()
+plt.savefig(dirOut + 'Vento_CFSR_2011-15_histvel_{}.png'.format(epoca), dpi=200)
+
+################## HISTOGRAMA DIR VENTO  ###################
+PercentHistogram(cfsr['dir'],binss=50)
+plt.title(u'Histograma de Direção do Vento - {} - CFSR'.format(epoca))
+plt.ylabel(u'Percentual')
+plt.xlabel(u'Direção em Graus')
+plt.xlim(0,360)
+plt.grid()
+plt.savefig(dirOut + 'Vento_CFSR_2011-15_histdir_{}.png'.format(epoca), dpi=200)
 #
-#lat,lon = np.meshgrid(lat1,lon1, sparse=False, indexing='ij')
 #
-#latmin=-27.2
-#latmax=-26.2
-#lonmin=-49
-#lonmax=-48
-##
-#m = Basemap(projection='cyl', resolution='f', llcrnrlon=lonmin, llcrnrlat=latmin , urcrnrlon=lonmax , urcrnrlat=latmax )
-#fig = plt.figure()
-#m.drawcoastlines(linewidth=0.25,color = 'k')
-#m.fillcontinents(color='0.8',lake_color='aqua')
-#m.plot(lon,lat, 'b.', markersize=10,label=u'Disponível')
-#m.plot(lon1[17],lat1[21], 'r.', markersize=10,label='CFSR')
-##m.plot(-48.651,-26.8833, 'b.', markersize=10,label='METAR') #aeroporto navegantes
-#plt.title(u'Dados de Vento Analisados',fontsize=12)
-#plt.legend([u'CFSR',u'METAR'],numpoints=1)
-#m.drawparallels(np.arange(latmin,latmax,0.5),labels=[1,0,0,0])
-#m.drawmeridians(np.arange(lonmin,lonmax,0.5),labels=[0,0,0,1])
-#plt.savefig(dirOut + 'DadosVento_position.png',dpi=200)
+lat,lon = np.meshgrid(lat1,lon1, sparse=False, indexing='ij')
+
+latmin=-27.2
+latmax=-26.2
+lonmin=-49
+lonmax=-48
 #
+m = Basemap(projection='cyl', resolution='f', llcrnrlon=lonmin, llcrnrlat=latmin , urcrnrlon=lonmax , urcrnrlat=latmax )
+fig = plt.figure()
+m.drawcoastlines(linewidth=0.25,color = 'k')
+m.fillcontinents(color='0.8',lake_color='aqua')
+m.plot(lon,lat, 'b.', markersize=10,label=u'Disponível')
+m.plot(lon1[13],lat1[11], 'r.', markersize=10,label='CFSR')
+#m.plot(-48.651,-26.8833, 'b.', markersize=10,label='METAR') #aeroporto navegantes
+plt.title(u'Dados de Vento Analisados',fontsize=12)
+plt.legend([u'CFSR',u'METAR'],numpoints=1)
+m.drawparallels(np.arange(latmin,latmax,0.5),labels=[1,0,0,0])
+m.drawmeridians(np.arange(lonmin,lonmax,0.5),labels=[0,0,0,1])
+plt.savefig(dirOut + 'DadosVento_position.png',dpi=200)
+
